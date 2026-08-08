@@ -111,8 +111,10 @@ static void drawIcon(ImDrawList* dl, ImVec2 p, float s, int icon, ImU32 col) {
     }
 }
 
+static constexpr float ICON_BUTTON_SIZE = 30.0f;
+
 static bool iconButton(const char* id, int icon, const char* tip, bool active=false) {
-    const float s = 30.0f;
+    const float s = ICON_BUTTON_SIZE;
     ImGui::PushID(id);
     ImVec2 p = ImGui::GetCursorScreenPos();
     if (active) ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetColorU32(ImGuiCol_ButtonActive));
@@ -139,8 +141,33 @@ void App::drawTopToolbar() {
     ImGui::BeginDisabled(mFillRunning);
     if (iconButton("genfill", IC_FILL, "Generate fill")) startFillGeneration(mFillNewName);
     ImGui::EndDisabled(); ImGui::SameLine();
-    if (iconButton("showfill", IC_EYE, mShowSkin ? "Hide fill" : "Show fill", mShowSkin)) mShowSkin = !mShowSkin;
-    ImGui::SameLine();
+    ImGui::TextDisabled("|"); ImGui::SameLine();
+
+    // What the viewport draws. These were the Visibility panel's checkboxes;
+    // they sit on the bar now that there are no panels. Centred against the
+    // 30 px buttons, which are taller than a checkbox.
+    {
+        const float y   = ImGui::GetCursorPosY();
+        const float pad = (ICON_BUTTON_SIZE - ImGui::GetFrameHeight()) * 0.5f;
+        // Each item needs the offset: SameLine restores the row's own Y, so
+        // nudging only the first one leaves the rest riding higher.
+        auto box = [&](const char* label, bool* v, const char* tip) {
+            ImGui::SetCursorPosY(y + pad);
+            ImGui::Checkbox(label, v);
+            if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+                ImGui::SetTooltip("%s", tip);
+            ImGui::SameLine();
+        };
+        ImGui::BeginDisabled(mSkinBones.empty());
+        // ASCII only: the default ImGui font has no em-dash and renders it as "?"
+        box("Skin", &mShowSkin, mSkinBones.empty()
+                ? "No skin bound yet - generate a fill or import a mesh"
+                : "Continuous skin over the body");
+        ImGui::EndDisabled();
+        box("Muscle vol", &mMuscleVolume, "Muscles as fusiform volumes, not lines");
+        box("Meshes", &mShowMesh, "Bone OBJ meshes instead of boxes");
+        ImGui::SetCursorPosY(y);
+    }
     ImGui::TextDisabled("|"); ImGui::SameLine();
     if (iconButton("export", IC_EXPORT, "Export a training set now")) {
         std::string dir, err;
