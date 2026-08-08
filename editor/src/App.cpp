@@ -11,6 +11,9 @@
 #include <functional>
 #include <cstring>
 #include <algorithm>
+#include <filesystem>
+#include <system_error>
+#include <nlohmann/json.hpp>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -25,18 +28,25 @@ bool App::init(GLFWwindow* win) {
     if (!mRen.init()) { std::fprintf(stderr, "renderer init failed\n"); return false; }
     newModel();
     mTrain.start(8765);   // telemetry server
+    mMcp.start(8767);     // in-process MCP: an agent edits the open model
     return true;
 }
-void App::shutdown() { if (mFillThread.joinable()) mFillThread.join(); mTrain.stop(); mRen.shutdown(); }
-
-void App::startTraining() {
-    // export current model to the real training data dir, then launch training
-    std::string err;
-    if (!ExportToLegacy(mModel, mDataRoot + "/data", &err)) { mStatus = "export to data failed: " + err; return; }
-    std::string cmd = "powershell -ExecutionPolicy Bypass -File \"" + mDataRoot + "\\scripts\\train.ps1\"";
-    mTrain.launchTraining(cmd);
-    mStatus = "Training started (model exported to data)";
+void App::shutdown() {
+    if (mFillThread.joinable()) mFillThread.join();
+    mMcp.stop();
+    mTrain.stop();
+    mRen.shutdown();
 }
+
+// Apply whatever an agent queued over the MCP port. Runs on the UI thread, so
+// the model has a single writer; anything derived from it is refreshed here.
+void App::mcpPoll() {
+    if (mMcp.poll(mModel) <= 0) return;
+    mSel.clear();          // indices may no longer mean the same thing
+    syncMeshes();
+    mStatus = "MCP: " + mMcp.lastTool() + "  (" + std::to_string(mMcp.served()) + " calls)";
+}
+
 
 // ---- OBJ loader (positions in world*100 -> *0.01; per-vertex normals) ----
 static bool loadObj(const std::string& path, MeshData& out) {
@@ -387,11 +397,13 @@ V3 App::lightHandle(const Light& L) const {
 static std::string deriveRoot(const std::string& fileInData) {
     std::string dir = fileInData;
     size_t s = dir.find_last_of("/\\"); if (s != std::string::npos) dir = dir.substr(0, s);
-    // if dir ends with "data", root is its parent
+    // if dir ends with "data", root is its parent — and for a relative path with
+    // no parent component ("data/x.mass") that parent is the working directory,
+    // not the literal "data" (which would make every derived path data/data/...)
     size_t s2 = dir.find_last_of("/\\");
     std::string base = (s2 != std::string::npos) ? dir.substr(s2 + 1) : dir;
-    if (base == "data" && s2 != std::string::npos) return dir.substr(0, s2);
-    return dir;
+    if (base == "data") return (s2 != std::string::npos) ? dir.substr(0, s2) : ".";
+    return dir.empty() ? "." : dir;
 }
 
 M4 App::liveBodyMatrix(const Node& n) const {
@@ -620,6 +632,81 @@ size_t App::simSignature() const {
     hashD(h, e.simHz); hashD(h, e.controlHz); hashD(h, e.actionScale);
     hashS(h, e.bvh_file); hashD(h, e.residual ? 1 : 0); hashD(h, e.enforceSymmetry ? 1 : 0);
     return h;
+}
+
+// Hash of what decides the shape of a training run: which muscles exist, in what
+// order, and which bones each one pulls on. Deliberately excludes Hill values and
+// waypoint coordinates — retuning a muscle's force does not invalidate a network,
+// adding or rerouting one does.
+size_t App::muscleSignature() const {
+    size_t h = 1469598103934665603ULL;
+    hashD(h, (double)mModel.muscles.size());
+    for (const auto& m : mModel.muscles) {
+        hashS(h, m.name);
+        hashD(h, (double)m.waypoints.size());
+        for (const auto& w : m.waypoints) hashS(h, w.body);
+    }
+    // the bone chain matters too: it sets the DOF count the policy outputs
+    hashD(h, (double)mModel.skeleton.size());
+    for (const auto& n : mModel.skeleton) { hashS(h, n.id); hashS(h, n.parent); hashS(h, n.joint.type); }
+    return h;
+}
+
+std::string App::trainingSetsRoot() const { return mDataRoot + "/data/train"; }
+
+// Write env.xml + skeleton + muscle for the current model into its own directory
+// under data/train, named after the muscle signature, plus a manifest describing
+// the network shape this set requires.
+bool App::exportTrainingSet(std::string* outDir, std::string* err) {
+    size_t sig = muscleSignature();
+    char stamp[32];
+    std::snprintf(stamp, sizeof(stamp), "%016llx", (unsigned long long)sig);
+    std::string dir = trainingSetsRoot() + "/m" + std::to_string(mModel.muscles.size()) + "_" + stamp;
+
+    std::error_code fec;
+    std::filesystem::create_directories(dir, fec);
+    if (fec) { if (err) *err = fec.message(); return false; }
+    if (!ExportToLegacy(mModel, dir, err)) return false;
+
+    nlohmann::json manifest = {
+        { "signature",  stamp },
+        { "muscles",    (int)mModel.muscles.size() },
+        { "bones",      (int)mModel.skeleton.size() },
+        { "source",     mProjectPath },
+        { "model_name", mModel.meta.name },
+        // what a checkpoint trained on this set has to match
+        { "network", {
+            { "muscle_out", (int)mModel.muscles.size() },
+            { "muscle_prev_in", (int)mModel.muscles.size() },
+        }},
+        { "files", { "env.xml", "skeleton_gaitnet_narrow_model.xml", "muscle_gaitnet.xml" } },
+    };
+    std::ofstream mf(dir + "/manifest.json");
+    if (!mf) { if (err) *err = "cannot write manifest in " + dir; return false; }
+    mf << manifest.dump(2);
+
+    mTrainSigExported = sig;
+    mTrainSetDir = dir;
+    if (outDir) *outDir = dir;
+    return true;
+}
+
+// Watch the muscle structure and write a fresh training set whenever it settles
+// on something new, so every structural change has the data to train it.
+void App::maybeExportTrainingSet() {
+    if (!mAutoExportTraining) return;
+    size_t cur = muscleSignature();
+    if (cur == mTrainSigExported) { mTrainDirtyAt = -1.0; return; }
+    double now = ImGui::GetTime();
+    if (mTrainDirtyAt < 0) { mTrainDirtyAt = now; return; }
+    if (now - mTrainDirtyAt < 1.0) return;      // let a burst of edits settle
+    mTrainDirtyAt = -1.0;
+
+    std::string dir, err;
+    if (exportTrainingSet(&dir, &err))
+        mStatus = "Training set: " + std::filesystem::path(dir).filename().string();
+    else
+        mStatus = "Training set export failed: " + err;
 }
 
 void App::applySimNow() {
@@ -1294,32 +1381,6 @@ void App::importRiggedDialog() {
     if (!p.empty()) loadRiggedFbx(p);
 }
 
-void App::drawRiggedControls() {
-    ImGui::SeparatorText("Rigged character (FBX/GLB)");
-    if (ImGui::Button("Load rigged FBX...")) importRiggedDialog();
-    if (!mRigged.loaded()) { ImGui::TextDisabled("skin + bones + walk anim + texture"); return; }
-    ImGui::SameLine(); ImGui::Checkbox("Show##rig", &mShowRigged);
-    ImGui::Checkbox("Play", &mRigPlay); ImGui::SameLine();
-    ImGui::Checkbox("Texture", &mRigUseTex);
-    ImGui::ColorEdit3("Color/tint", &mRigColor.x);
-    float dur = (float)mRigged.animSeconds();
-    if (dur > 0) { float t = (float)std::fmod(mRigTime, dur);
-        if (ImGui::SliderFloat("Time", &t, 0.0f, dur, "%.2fs")) { mRigTime = t; mRigPlay = false; } }
-    ImGui::TextDisabled("%zu verts  %zu bones  %.1fs clip%s", mRigged.basePos.size(),
-                        mRigged.bones.size(), mRigged.animSeconds(), mRigTex?"  (textured)":"  (no tex)");
-    ImGui::Spacing();
-    ImGui::SeparatorText("Drive by MASS sim");
-    if (ImGui::Button("Bind to MASS skeleton")) bindRiggedToSkeleton();
-    ImGui::SameLine();
-    if (ImGui::Button("Generate .mass")) saveRiggedMass();
-    if (mSkinTextured) {
-        ImGui::TextDisabled("bound: sim drives the char (own rig dropped)");
-        ImGui::Checkbox("Texture##skin", &mSkinUseTex);
-        ImGui::ColorEdit3("Color/tint##skin", &mSkinColor.x);
-    } else {
-        ImGui::TextDisabled("drops the Mixamo rig; the walk sim deforms the char");
-    }
-}
 
 // Resize the SELECTED bone's box to the local skin mesh (verts nearest to it),
 // keeping the L/R pair symmetric. Fine per-bone tweak for ribs/fingers/toes.
@@ -1377,43 +1438,6 @@ void App::fitSelectedBoneToSkin() {
 }
 
 // import button + scale/offset sliders for the imported skin (Tools panel)
-void App::drawSkinControls() {
-    ImGui::SeparatorText("Skin (imported mesh)");
-    if (ImGui::Button("Import mesh as skin...")) importSkinMesh();
-    if (mSkinRawPos.empty()) {
-        ImGui::TextDisabled("obj / glb / fbx / stl / 3mf");
-        return;
-    }
-    ImGui::SameLine();
-    if (ImGui::Checkbox("Show", &mShowSkin)) {}
-    ImGui::SameLine();
-    ImGui::Checkbox("Hide rig", &mHideRig);   // character-only view
-    // orientation fix (GLB/FBX from generators are often Z-up or face a different way)
-    bool rot = false;
-    ImGui::TextUnformatted("Orient:"); ImGui::SameLine();
-    if (ImGui::Button("X+90")) { mSkinRotDeg.x += 90; rot = true; } ImGui::SameLine();
-    if (ImGui::Button("Y+90")) { mSkinRotDeg.y += 90; rot = true; } ImGui::SameLine();
-    if (ImGui::Button("Z+90")) { mSkinRotDeg.z += 90; rot = true; } ImGui::SameLine();
-    if (ImGui::Button("Rot 0")) { mSkinRotDeg = V3{0,0,0}; rot = true; }
-    if (ImGui::SliderFloat3("Rot (deg)", &mSkinRotDeg.x, -180.0f, 180.0f, "%.0f")) rot = true;
-    if (rot) rebuildSkinFromOrig();
-    bool changed = false;
-    changed |= ImGui::SliderFloat("Skin scale", &mSkinUserScale, 0.2f, 3.0f, "%.2fx");
-    changed |= ImGui::SliderFloat("Offset X", &mSkinUserOff.x, -1.0f, 1.0f, "%.3f");
-    changed |= ImGui::SliderFloat("Offset Y", &mSkinUserOff.y, -1.0f, 1.0f, "%.3f");
-    changed |= ImGui::SliderFloat("Offset Z", &mSkinUserOff.z, -1.0f, 1.0f, "%.3f");
-    if (ImGui::Button("Reset fit")) { mSkinUserScale = 1.0f; mSkinUserOff = V3{0,0,0}; changed = true; }
-    ImGui::SameLine();
-    if (ImGui::Button("Clear skin")) { clearSkin(); return; }
-    if (ImGui::Button("Fit skeleton to skin")) fitSkeletonToSkin();
-    ImGui::SameLine(); ImGui::TextDisabled("(adapt bones)");
-    if (ImGui::Button("Fit selected bone")) fitSelectedBoneToSkin();
-    ImGui::SameLine();
-    if (ImGui::Button("Re-bind skin")) rebindSkin();
-    ImGui::TextDisabled("select a bone in the tree, gizmo-edit, then Re-bind");
-    if (changed) applySkinPlacement();
-    ImGui::TextDisabled("%zu tris  |  auto x%.2f", mSkinRawPos.size()/3, mSkinAutoScale);
-}
 void App::applyAtlas(const AtlasEntry& a) {
     if (Muscle* mu = selMuscle()) {
         snapshot();

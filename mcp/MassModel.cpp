@@ -376,4 +376,18 @@ bool Model::SaveMass(const std::string& path, std::string* err) const {
     }
 }
 
+
+std::string Model::ToJsonString() const {
+    return toJson(*this).dump();
+}
+
+std::optional<Model> Model::FromJsonString(const std::string& text, std::string* err) {
+    try {
+        return fromJson(json::parse(text));
+    } catch (const std::exception& e) {
+        if (err) *err = e.what();
+        return std::nullopt;
+    }
+}
+
 } // namespace mass

@@ -211,6 +211,12 @@ struct Model {
     // JSON project (.mass)
     static std::optional<Model> LoadMass(const std::string& path, std::string* err = nullptr);
     bool SaveMass(const std::string& path, std::string* err = nullptr) const;
+
+    // Same serialization, in memory. This is the interchange format between the
+    // editor's Model and libmassedit's: the two carry the same data in separate
+    // types, and a .mass round-trip converts one into the other losslessly.
+    std::string ToJsonString() const;
+    static std::optional<Model> FromJsonString(const std::string& text, std::string* err = nullptr);
 };
 
 } // namespace ed

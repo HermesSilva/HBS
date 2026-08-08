@@ -18,6 +18,7 @@ target_compile_features(editor PRIVATE cxx_std_17)
 
 target_link_libraries(editor PRIVATE
   sim                       # this project's simulation core (DART Environment, Character, NN)
+  massedit                  # .mass editing tools, hosted in-process as an MCP server
   glfw
   glad::glad
   imgui::imgui

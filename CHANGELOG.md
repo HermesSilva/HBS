@@ -36,9 +36,42 @@ nlohmann/json, tinyxml2 (`.osim` atlas) and Boost.Asio (TCP transport).
 - `gaitnet-mcp data/project.mass 8766` loads (23 bones, 304 muscles); a TCP client
   gets valid `initialize`, `tools/list` and `tools/call describe_model` responses.
 
-### Not yet wired
-- In-process Arena bridge (`McpQueue` drained in `App::frame` + an Asio transport)
-  so an AI can edit the live model while the editor is open.
+### In-process Arena bridge — now wired
+- `mcp/` builds a `massedit` static library, which the editor links; the
+  standalone server is a thin `main.cpp` on top of it.
+- `editor/src/McpHost.{h,cpp}`: an Asio acceptor on **127.0.0.1:8767** parks each
+  request on `McpQueue`; `App::mcpPoll` drains it once per frame, so the model
+  keeps a single writer and needs no locking. The `McpServer` instance lives
+  across frames, so a loaded atlas survives between calls.
+- The editor's `Model` and libmassedit's `Model` are separate types holding the
+  same data, so a request converts one to the other through the `.mass` JSON both
+  already agree on (`Model::ToJsonString` / `FromJsonString`, added to both).
+
+## [Unreleased] — Arena: stripped UI, in-process MCP, versioned training sets
+
+### Changed
+- **UI reduced to the button bar.** Every docked panel is gone (Scene, Properties,
+  Tools, GaitNet, Anatomy check, Atlas, Training, Fills, Lights) along with the
+  dockspace; the window is now the menu bar, the icon row and a full-bleed 3D
+  view. The model is driven through the MCP server instead of through panels.
+- `deriveRoot` no longer returns the literal `"data"` for a one-component
+  relative path (`data/x.mass`), which made every derived path `data/data/...`.
+
+### Added
+- **Training sets versioned by muscle structure** (`data/train/m<N>_<sig>/`):
+  env.xml + skeleton + muscle xml plus a `manifest.json` recording the muscle and
+  bone counts and the network shape the set requires. `App::muscleSignature`
+  hashes what decides that shape — which muscles exist, in what order, and which
+  bones each pulls on — and deliberately ignores Hill values and waypoint
+  coordinates, since retuning a force does not invalidate a checkpoint but adding
+  or rerouting a muscle does. A new set is written automatically (debounced)
+  whenever the structure settles on something new; the button bar has a manual
+  export and a toggle for the automatic one.
+
+### Removed
+- `App::startTraining`, which had no caller left after the Training panel went
+  away and launched `scripts/train.ps1` — a script that does not exist in this
+  port, where offline training was removed.
 
 ## [Unreleased] — Visual character editor (`editor/`)
 

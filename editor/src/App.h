@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #include "SimBridge.h"
 #include "TrainBridge.h"
+#include "McpHost.h"
 #include "SkinGen.h"
 #include "RiggedMesh.h"
 #include <vector>
@@ -62,7 +63,6 @@ private:
     SkinParams mSkinParams;
     void drawMuscleTube(const Muscle& mu, const V3& color);
     void regenerateSkin();
-    void drawFillsPanel();
     // smooth linear-blend skinning: each vertex weighted to its K nearest bodies,
     // stored in each of those bodies' rest-local space (smooth joints, no rigid cracks)
     static constexpr int SKIN_K = 4;
@@ -97,7 +97,6 @@ private:
     V3 mSkinUserOff{0,0,0};                // user world offset (m)
     void applySkinPlacement();             // re-place raw mesh -> bindSkin
     void clearSkin();
-    void drawSkinControls();               // scale/offset sliders
     void fitSkeletonToSkin();              // morph bone chains to the imported mesh silhouette
     void fitSelectedBoneToSkin();          // resize the selected bone box to its local mesh (L/R kept symmetric)
     void rebindSkin();                     // re-bind skin to the current skeleton (after manual gizmo edits)
@@ -113,7 +112,6 @@ private:
     std::vector<V3> mRigPos, mRigNrm;      // skinned output (reused buffers)
     void loadRiggedFbx(const std::string& path);
     void importRiggedDialog();
-    void drawRiggedControls();
 
     // fills (generated skin/tissue envelopes), async generation with progress
     std::atomic<float> mFillProgress{0.0f};
@@ -184,14 +182,6 @@ private:
     // panels
     void drawMenuBar();
     void drawTopToolbar();   // horizontal action button bar under the menu
-    void drawToolbar();
-    void drawTree();
-    void drawProperties();
-    void drawValidation();
-    void drawAtlas();
-    void drawTrain();
-    void drawGaitNet();      // env.xml settings + <parameter> block editor
-    void drawLights();
 
     // scene lighting
     int mSelLight = -1;
@@ -199,7 +189,26 @@ private:
 
     // training telemetry bridge (asio)
     TrainBridge mTrain;
-    void startTraining();
+
+    // Training sets, versioned by muscle structure. The policy and muscle
+    // networks are sized from the muscle list — one activation out per muscle,
+    // and the previous activations fed back in — so a checkpoint is only valid
+    // for the structure it was trained on. Every change to that structure
+    // therefore gets its own export directory, stamped with its signature, and
+    // a manifest recording what the nets must be shaped for.
+    size_t muscleSignature() const;
+    size_t mTrainSigExported = 0;   // signature of the last set written
+    double mTrainDirtyAt = -1.0;    // when the structure last changed (debounce)
+    bool mAutoExportTraining = true;
+    std::string mTrainSetDir;       // directory of the most recent export
+    std::string trainingSetsRoot() const;              // <dataRoot>/data/train
+    bool exportTrainingSet(std::string* outDir, std::string* err);
+    void maybeExportTrainingSet();  // called once per frame
+
+    // in-process MCP server: an agent drives the open model over TCP, applied
+    // on the UI thread once per frame
+    McpHost mMcp;
+    void mcpPoll();
 
     // import an external (rigless) mesh as the skin, auto-scaled to the skeleton
     void importSkinMesh();                       // via file dialog

@@ -38,6 +38,14 @@ if(GAITNET_BUILD_VIEWER)
   add_subdirectory( viewer )
 endif()
 
+# Model-editing core + MCP server (pure C++17 over the .mass project; no
+# DART/Python). Comes before the editor, which links the `massedit` library to
+# host the same tools in-process.
+option(GAITNET_BUILD_MCP "Build the .mass MCP server" ON)
+if(GAITNET_BUILD_MCP)
+  add_subdirectory( mcp )
+endif()
+
 # Arena-style visual character editor (GaitNet formats). Needs a display.
 option(GAITNET_BUILD_EDITOR "Build the visual character editor" ON)
 if(SERVER_BUILD)
@@ -45,10 +53,4 @@ if(SERVER_BUILD)
 endif()
 if(GAITNET_BUILD_EDITOR)
   add_subdirectory( editor )
-endif()
-
-# Model-editing MCP server (pure C++17 over the .mass project; no DART/Python).
-option(GAITNET_BUILD_MCP "Build the .mass MCP server" ON)
-if(GAITNET_BUILD_MCP)
-  add_subdirectory( mcp )
 endif()
