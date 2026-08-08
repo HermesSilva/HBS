@@ -8,7 +8,7 @@ param([string]$Project, [ValidateSet("Release","Debug")][string]$Config = "Relea
 
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
-$rel  = "$root\build\editor\$Config"
+$rel  = "$root\Dist\x64\$Config"
 $vbin = "D:\Tootega\Source\MASS\Deps\vcpkg\installed\x64-windows\bin"
 
 if (-not (Test-Path "$rel\editor.exe")) { throw "editor.exe not found; run scripts\build.ps1 first." }

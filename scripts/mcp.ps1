@@ -9,7 +9,7 @@ param([Parameter(Mandatory=$true)][string]$Project, [int]$Port = 8766,
 
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
-$rel  = "$root\build\mcp\$Config"
+$rel  = "$root\Dist\x64\$Config"
 $vbin = "D:\Tootega\Source\MASS\Deps\vcpkg\installed\x64-windows\bin"
 
 if (-not (Test-Path "$rel\gaitnet-mcp.exe")) { throw "gaitnet-mcp.exe not found; run scripts\build.ps1 first." }

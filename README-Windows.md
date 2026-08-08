@@ -46,7 +46,7 @@ powershell -ExecutionPolicy Bypass -File scripts\build.ps1
 powershell -ExecutionPolicy Bypass -File scripts\build.ps1 -NoViewer
 ```
 
-Produces `build\viewer\Release\viewer.exe`. No Python is involved in the build or
+Produces `Dist\x64\Release\viewer.exe`. No Python is involved in the build or
 at runtime.
 
 ## Run the viewer

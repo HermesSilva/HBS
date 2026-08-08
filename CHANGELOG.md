@@ -16,7 +16,7 @@ nlohmann/json, tinyxml2 (`.osim` atlas) and Boost.Asio (TCP transport).
 
 ### Added
 - `mcp/` — the model-editing library + a standalone MCP server
-  (`build/mcp/<Config>/gaitnet-mcp.exe`). `scripts/mcp.ps1` launches it.
+  (`Dist/x64/<Config>/gaitnet-mcp.exe`). `scripts/mcp.ps1` launches it.
 - Modules: MassModel, Index (generational handles + reverse indices + group
   selector), Query, Kinematics (FK), DofMap, Batch (scale_bone/translate_subtree),
   Complete (finger generation), Atlas (.osim), Groom (hair PBD), Mcp (JSON-RPC
@@ -46,6 +46,23 @@ nlohmann/json, tinyxml2 (`.osim` atlas) and Boost.Asio (TCP transport).
 - The editor's `Model` and libmassedit's `Model` are separate types holding the
   same data, so a request converts one to the other through the `.mass` JSON both
   already agree on (`Model::ToJsonString` / `FromJsonString`, added to both).
+
+## [Unreleased] — build.cmd, and every executable in Dist/x64/<Config>
+
+### Added
+- `build.cmd` — one-shot build of everything from cmd.exe: configure (reusing
+  the sibling MASS vcpkg) plus all targets. `debug`, `fresh`, `noviewer` and
+  `target <name>` combine; `VCPKG_ROOT` and `CMAKE_GENERATOR` override the
+  defaults. Distinct exit codes per failure (missing cmake, missing toolchain,
+  configure, build) so it composes in a pipeline.
+
+### Changed
+- Executables now land in `Dist/x64/<Config>/`, the layout `Arena.vcxproj`
+  already used, instead of one directory per target under `build/`. Set through
+  the per-config `CMAKE_RUNTIME_OUTPUT_DIRECTORY_<CONFIG>` variables — the plain
+  one would make a multi-config generator append a second `<Config>` level — and
+  the per-target overrides were dropped. `scripts/Arena.ps1`, `mcp.ps1`,
+  `view.ps1` and `build_model02.ps1` follow.
 
 ## [Unreleased] — Arena: stripped UI, in-process MCP, versioned training sets
 

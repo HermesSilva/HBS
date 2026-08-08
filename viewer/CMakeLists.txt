@@ -31,4 +31,3 @@ target_link_libraries(viewer
     OpenGL::GLU
     FreeGLUT::freeglut)
 
-set_target_properties(viewer PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/viewer)

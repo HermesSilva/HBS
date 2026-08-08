@@ -10,7 +10,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
-$rel  = "$root\build\viewer\$Config"
+$rel  = "$root\Dist\x64\$Config"
 $vbin = "D:\Tootega\Source\MASS\Deps\vcpkg\installed\x64-windows\bin"
 $venv = "D:\Tootega\Source\MASS\Deps\venv\Lib\site-packages"
 $pyBase = "C:\Users\Hermes\AppData\Local\Programs\Python\Python310"

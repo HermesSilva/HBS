@@ -35,4 +35,3 @@ if(WIN32)
   target_link_libraries(editor PRIVATE opengl32 comdlg32 shell32 ws2_32 mswsock)
 endif()
 
-set_target_properties(editor PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/editor)

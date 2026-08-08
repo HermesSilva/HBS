@@ -53,10 +53,10 @@ rewriting them invalidates a trained policy.
 model lacks, mirroring each left-side definition to the right.
 
 ## Build & run
-Built by the top-level CMake (`GAITNET_BUILD_MCP=ON`) → `build/mcp/<Config>/gaitnet-mcp.exe`.
+Built by the top-level CMake (`GAITNET_BUILD_MCP=ON`) → `Dist/x64/<Config>/gaitnet-mcp.exe`.
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts\build.ps1
+build.cmd
 powershell -ExecutionPolicy Bypass -File scripts\mcp.ps1 data\project.mass 8766
 ```
 

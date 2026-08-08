@@ -14,7 +14,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent $PSScriptRoot
-$exe  = "$root\build\mcp\Release\gaitnet-mcp.exe"
+$exe  = "$root\Dist\x64\Release\gaitnet-mcp.exe"
 if (-not (Test-Path $exe)) { throw "build the MCP first: cmake --build build --config Release" }
 
 Get-Process gaitnet-mcp -ErrorAction SilentlyContinue | Stop-Process -Force
