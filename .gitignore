@@ -24,7 +24,14 @@ editor_smoke.png
 editor_gaitnet.png
 editor/Release/
 editor/Debug/
+# scratch .mass files anywhere, but the project models under data/ are tracked:
+# they are authored assets, and only the tools can recreate them.
 *.mass
+!data/*.mass
+# training sets: regenerated from the tracked .mass whenever the muscle
+# structure changes, so the model is the source of truth, not these
+data/train/
+imgui.ini
 editor_tmp/
 Dist/
 *.vcxproj.user
