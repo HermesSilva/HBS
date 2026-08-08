@@ -21,20 +21,21 @@
   <PropertyGroup Condition="'$(Configuration)'=='Release'"><UseDebugLibraries>false</UseDebugLibraries></PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <Import Project="$(VcpkgRootDir)\scripts\buildsystems\msbuild\vcpkg.props" />
-  <Import Project="..\Bgn.props" />
+  <Import Project="..\Hbs.props" />
   <PropertyGroup><TargetName>Arena</TargetName></PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
-    <ClCompile><Optimization>Disabled</Optimization><RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary></ClCompile>
+    <ClCompile><Optimization>Disabled</Optimization><RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary><AdditionalIncludeDirectories>$(ProjectDir)..\mcp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories><PreprocessorDefinitions>_WIN32_WINNT=0x0601;BOOST_ASIO_NO_DEPRECATED;%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile>
     <Link><SubSystem>Console</SubSystem><AdditionalDependencies>opengl32.lib;comdlg32.lib;shell32.lib;ws2_32.lib;mswsock.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
-    <ClCompile><Optimization>MaxSpeed</Optimization><RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary></ClCompile>
+    <ClCompile><Optimization>MaxSpeed</Optimization><RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary><AdditionalIncludeDirectories>$(ProjectDir)..\mcp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories><PreprocessorDefinitions>_WIN32_WINNT=0x0601;BOOST_ASIO_NO_DEPRECATED;%(PreprocessorDefinitions)</PreprocessorDefinitions></ClCompile>
     <Link><SubSystem>Console</SubSystem><AdditionalDependencies>opengl32.lib;comdlg32.lib;shell32.lib;ws2_32.lib;mswsock.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\Bootstrap.cpp" />
     <ClCompile Include="src\MassModel.cpp" />
+    <ClCompile Include="src\McpHost.cpp" />
     <ClCompile Include="src\Panels.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\RiggedMesh.cpp" />
@@ -49,6 +50,7 @@
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Dialog.h" />
     <ClInclude Include="src\MassModel.h" />
+    <ClInclude Include="src\McpHost.h" />
     <ClInclude Include="src\Math.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\SimBridge.h" />
@@ -57,6 +59,22 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="src\SkinGenTriTable.inc" />
+  </ItemGroup>
+  <!-- libmassedit: the .mass editing core Arena hosts as an in-process MCP
+       server. CMake builds these into the `massedit` library; MSBuild compiles
+       them straight in, so both paths stay in step. -->
+  <ItemGroup>
+    <ClCompile Include="..\mcp\MassModel.cpp" />
+    <ClCompile Include="..\mcp\Index.cpp" />
+    <ClCompile Include="..\mcp\Kinematics.cpp" />
+    <ClCompile Include="..\mcp\DofMap.cpp" />
+    <ClCompile Include="..\mcp\Batch.cpp" />
+    <ClCompile Include="..\mcp\Complete.cpp" />
+    <ClCompile Include="..\mcp\Query.cpp" />
+    <ClCompile Include="..\mcp\Atlas.cpp" />
+    <ClCompile Include="..\mcp\Groom.cpp" />
+    <ClCompile Include="..\mcp\BindSkin.cpp" />
+    <ClCompile Include="..\mcp\Mcp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\sim\Sim.vcxproj"><Project>{A0000000-0000-0000-0000-000000000001}</Project></ProjectReference>

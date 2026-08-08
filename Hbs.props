@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Shared settings for the hand-authored native VS projects (Sim, Arena).
+<!-- HBS shared settings for the hand-authored native VS projects (Sim, Arena).
      Dependency resolution is delegated to vcpkg's MSBuild auto-link (each project
      imports vcpkg.props / vcpkg.targets), so DART / Bullet / GLFW / imgui /
      imguizmo / tinyxml2 / nlohmann-json / boost-asio are linked automatically. -->

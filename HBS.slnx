@@ -4,6 +4,6 @@
   </Configurations>
   <Folder Name="/App/">
     <Project Path="sim/Sim.vcxproj" Id="a0000000-0000-0000-0000-000000000001" />
-    <Project Path="editor/Arena.vcxproj" Id="a0000000-0000-0000-0000-000000000002" />
+    <Project Path="Arena/Arena.vcxproj" Id="a0000000-0000-0000-0000-000000000002" />
   </Folder>
 </Solution>

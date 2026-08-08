@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(editor)
+project(Arena)
 
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
@@ -11,12 +11,12 @@ find_package(assimp CONFIG REQUIRED)
 find_package(DART REQUIRED COMPONENTS collision-bullet utils CONFIG)
 find_package(boost_asio CONFIG REQUIRED)
 
-file(GLOB editor_srcs "src/*.cpp" "src/*.h")
+file(GLOB arena_srcs "src/*.cpp" "src/*.h")
 
-add_executable(editor ${editor_srcs})
-target_compile_features(editor PRIVATE cxx_std_17)
+add_executable(Arena ${arena_srcs})
+target_compile_features(Arena PRIVATE cxx_std_17)
 
-target_link_libraries(editor PRIVATE
+target_link_libraries(Arena PRIVATE
   sim                       # this project's simulation core (DART Environment, Character, NN)
   massedit                  # .mass editing tools, hosted in-process as an MCP server
   glfw
@@ -32,6 +32,6 @@ target_link_libraries(editor PRIVATE
   Boost::asio)
 
 if(WIN32)
-  target_link_libraries(editor PRIVATE opengl32 comdlg32 shell32 ws2_32 mswsock)
+  target_link_libraries(Arena PRIVATE opengl32 comdlg32 shell32 ws2_32 mswsock)
 endif()
 

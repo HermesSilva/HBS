@@ -22,8 +22,8 @@ viewer_windows_smoke.png
 viewer_nopython.png
 editor_smoke.png
 editor_gaitnet.png
-editor/Release/
-editor/Debug/
+Arena/Release/
+Arena/Debug/
 # scratch .mass files anywhere, but the project models under data/ are tracked:
 # they are authored assets, and only the tools can recreate them.
 *.mass

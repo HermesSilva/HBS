@@ -1,14 +1,14 @@
 @echo off
 setlocal EnableDelayedExpansion
 rem ===========================================================================
-rem  Build everything: sim, viewer, editor (Arena), the MCP server and envcheck.
+rem  Build everything: sim, viewer, Arena (the editor), the MCP server, envcheck.
 rem
 rem  Usage:
 rem    build.cmd                  Release, viewer on
 rem    build.cmd debug            Debug build
 rem    build.cmd fresh            wipe build\ and reconfigure first
 rem    build.cmd noviewer         skip the GLFW viewer (sim + tools only)
-rem    build.cmd target editor    build one target only
+rem    build.cmd target Arena     build one target only
 rem    build.cmd help
 rem
 rem  Options combine: build.cmd fresh debug noviewer
@@ -68,7 +68,7 @@ shift
 shift
 goto parse
 :err_target
-echo [error] "target" needs a target name, e.g. build.cmd target editor
+echo [error] "target" needs a target name, e.g. build.cmd target Arena
 exit /b 2
 
 :parsed
@@ -133,19 +133,19 @@ rem ---- report ---------------------------------------------------------------
 echo.
 echo [done] %CONFIG% -^> Dist\x64\%CONFIG%
 set "DIST=%ROOT%\Dist\x64\%CONFIG%"
-for %%E in (editor.exe viewer.exe gaitnet-mcp.exe envcheck.exe) do (
+for %%E in (Arena.exe viewer.exe gaitnet-mcp.exe envcheck.exe) do (
     if exist "%DIST%\%%E" echo        %%E
 )
 exit /b 0
 
 :usage
-echo Build everything: sim, viewer, editor ^(Arena^), MCP server, envcheck.
+echo Build everything: sim, viewer, Arena ^(the editor^), MCP server, envcheck.
 echo.
 echo   build.cmd                  Release, viewer on
 echo   build.cmd debug            Debug build
 echo   build.cmd fresh            wipe build\ and reconfigure first
 echo   build.cmd noviewer         skip the GLFW viewer
-echo   build.cmd target editor    build one target only
+echo   build.cmd target Arena     build one target only
 echo.
 echo Options combine, e.g.  build.cmd fresh debug noviewer
 echo.

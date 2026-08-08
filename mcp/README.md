@@ -1,10 +1,10 @@
-# mcp — .mass model-editing MCP server
+# mcp — .mass model-editing MCP server (HBS)
 
-Pure C++17 model-editing library + MCP server over the BidirectionalGaitNet
-`.mass` project. No DART, no Python — only nlohmann/json, tinyxml2 (`.osim` atlas)
-and Boost.Asio (TCP transport). Copied/adapted from MASS-Easy's `libmassedit` and
-re-targeted to this project's `.mass` schema (adds the GaitNet `env.xml` config,
-the `<parameter>` block and per-joint `kp`/`kv`, which round-trip losslessly).
+Pure C++17 model-editing library + MCP server over the HBS `.mass` project. No
+DART, no Python — only nlohmann/json, tinyxml2 (`.osim` atlas) and Boost.Asio
+(TCP transport). Copied/adapted from MASS-Easy's `libmassedit` and re-targeted to
+this project's `.mass` schema (adds the GaitNet `env.xml` config, the
+`<parameter>` block and per-joint `kp`/`kv`, which round-trip losslessly).
 
 ## Modules
 | File | Role |
@@ -86,9 +86,8 @@ Because the editor and `massedit` hold the same data in two separate `Model`
 types, each drain converts one into the other through the `.mass` JSON they both
 already agree on (`Model::ToJsonString` / `FromJsonString`).
 
-## In-process Arena bridge (implementation notes)
-`McpQueue` is the co-edit mechanism: any thread `submit`s a request and gets a
-`std::future`; the owner (Arena's UI thread) `drain`s once per frame, applying
-every request through `McpServer` on that single thread — no model locks. Wiring
-this into the Arena editor (Asio transport → queue → drain in `App::frame`) lets
-an AI edit the live model while it is open. Not yet wired here.
+## `McpQueue`, the co-edit mechanism
+Any thread `submit`s a request and gets a `std::future`; the owner (Arena's UI
+thread) `drain`s once per frame, applying every request through `McpServer` on
+that single thread — no model locks. `Arena/src/McpHost.cpp` is the transport
+that feeds it.

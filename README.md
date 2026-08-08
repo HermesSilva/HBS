@@ -1,4 +1,17 @@
-# Bidirectional GaitNet 
+# HBS — Human Body Simulator
+
+A simulation-ready human body: skeleton, musculature and skin, driven by physics,
+built on top of Bidirectional GaitNet (SIGGRAPH 2023).
+
+| Piece | What it is |
+|---|---|
+| `sim/` | the simulation core — DART, Hill-type muscles, `Environment`, Eigen NN inference |
+| `Arena/` | the visual character editor (`Arena.exe`), hosting an in-process MCP server |
+| `mcp/` | `massedit` + a standalone MCP server for editing the `.mass` model |
+| `viewer/` | the GaitNet viewer for the pre-trained networks |
+| `tools/envcheck` | loads a training set into the engine and steps it |
+
+Build everything with `build.cmd`; executables land in `Dist\x64\Release`.
 
 > **Fork notice.** This repository is a fork of
 > [**namjohn10/BidirectionalGaitNet**](https://github.com/namjohn10/BidirectionalGaitNet)
@@ -10,6 +23,10 @@
 > remains with the original authors and this fork does not grant any additional
 > rights. Use for research/academic purposes and contact the authors
 > (jungnam04@imo.snu.ac.kr) for other uses. Please cite the paper below.
+>
+> HBS is the name of this fork's own work — the editor, the MCP tooling, the
+> anatomical model work and the Windows port. The research it stands on, and
+> everything documented from here down, belongs to the original authors.
 
 This code is an implementation of Bidirectional GaitNet (SIGGRAPH 2023). It includes "Generative GaitNet (SIGGRAPH 2022)."
 

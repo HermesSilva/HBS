@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes made in this fork relative to the upstream
+All notable changes made in HBS (Human Body Simulator) relative to the upstream
 [namjohn10/BidirectionalGaitNet](https://github.com/namjohn10/BidirectionalGaitNet)
 are documented here. Upstream code, models and data remain the work of the original
 authors (Jungnam Park, Moon Seok Park, Jehee Lee, Jungdam Won).
@@ -39,13 +39,32 @@ nlohmann/json, tinyxml2 (`.osim` atlas) and Boost.Asio (TCP transport).
 ### In-process Arena bridge — now wired
 - `mcp/` builds a `massedit` static library, which the editor links; the
   standalone server is a thin `main.cpp` on top of it.
-- `editor/src/McpHost.{h,cpp}`: an Asio acceptor on **127.0.0.1:8767** parks each
+- `Arena/src/McpHost.{h,cpp}`: an Asio acceptor on **127.0.0.1:8767** parks each
   request on `McpQueue`; `App::mcpPoll` drains it once per frame, so the model
   keeps a single writer and needs no locking. The `McpServer` instance lives
   across frames, so a loaded atlas survives between calls.
 - The editor's `Model` and libmassedit's `Model` are separate types holding the
   same data, so a request converts one to the other through the `.mass` JSON both
   already agree on (`Model::ToJsonString` / `FromJsonString`, added to both).
+
+## [Unreleased] — renamed: the project is HBS, the editor is Arena
+
+### Changed
+- The project is **HBS — Human Body Simulator**: `BGN.slnx` → `HBS.slnx`,
+  `Bgn.props` → `Hbs.props`, and the docs name it accordingly. The fork notice
+  and every credit to the upstream authors are untouched: HBS names this fork's
+  own work, not the research it stands on.
+- `editor/` → `Arena/`, and the CMake target `editor` → `Arena`, so the binary
+  is `Arena.exe` — the name `Arena.vcxproj` already produced. `scripts/Arena.ps1`,
+  `build.cmd`, `HBS.slnx`, `.gitignore` and the docs follow.
+- `Arena/Arena.vcxproj` had fallen behind the CMake build: it was missing
+  `McpHost.cpp` and the libmassedit sources Arena now needs. Both paths compile
+  the same set again.
+
+### Note
+- `bgn/` and `fgn/` keep their names. They are the **Backward** and **Forward
+  GaitNet** of the paper, not the project's name, and the checkpoints inside are
+  named after them.
 
 ## [Unreleased] — build.cmd, and every executable in Dist/x64/<Config>
 
@@ -90,7 +109,7 @@ nlohmann/json, tinyxml2 (`.osim` atlas) and Boost.Asio (TCP transport).
   away and launched `scripts/train.ps1` — a script that does not exist in this
   port, where offline training was removed.
 
-## [Unreleased] — Visual character editor (`editor/`)
+## [Unreleased] — Visual character editor (`editor/`, since renamed `Arena/`)
 
 Added a standalone Arena-style 3D character editor that edits this project's native
 formats. It is self-contained: it links this repo's `sim` library and vcpkg

@@ -53,18 +53,18 @@ endif()
 add_subdirectory( tools/envcheck )
 
 # Model-editing core + MCP server (pure C++17 over the .mass project; no
-# DART/Python). Comes before the editor, which links the `massedit` library to
+# DART/Python). Comes before Arena, which links the `massedit` library to
 # host the same tools in-process.
 option(GAITNET_BUILD_MCP "Build the .mass MCP server" ON)
 if(GAITNET_BUILD_MCP)
   add_subdirectory( mcp )
 endif()
 
-# Arena-style visual character editor (GaitNet formats). Needs a display.
-option(GAITNET_BUILD_EDITOR "Build the visual character editor" ON)
+# Arena — the visual character editor (GaitNet formats). Needs a display.
+option(GAITNET_BUILD_EDITOR "Build Arena, the visual character editor" ON)
 if(SERVER_BUILD)
   set(GAITNET_BUILD_EDITOR OFF)
 endif()
 if(GAITNET_BUILD_EDITOR)
-  add_subdirectory( editor )
+  add_subdirectory( Arena )
 endif()

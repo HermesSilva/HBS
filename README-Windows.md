@@ -1,9 +1,9 @@
-# Bidirectional GaitNet on Windows (native, MSVC + vcpkg)
+# HBS on Windows (native, MSVC + vcpkg)
 
-Windows-native port of Bidirectional GaitNet (SIGGRAPH 2023). The original code
-targets Linux (GCC, EGL, ray/rllib 1.8, Python 3.6). This port builds the C++
-simulation, the `pysim` Python binding and the OpenGL/ImGui viewer with MSVC and
-vcpkg, and runs the Bidirectional GaitNet training pipeline on Python 3.10.
+HBS (Human Body Simulator) is a Windows-native port of Bidirectional GaitNet
+(SIGGRAPH 2023), extended with the Arena editor and the `.mass` tooling. The
+original code targets Linux (GCC, EGL, ray/rllib 1.8, Python 3.6); this port
+builds the C++ simulation and the OpenGL/ImGui viewer with MSVC and vcpkg.
 
 ## Status
 
@@ -38,16 +38,16 @@ and `scripts\view.ps1`.
 
 ## Build
 
-```powershell
-# sim + viewer (Release)
-powershell -ExecutionPolicy Bypass -File scripts\build.ps1
-
-# sim only (headless / no GUI)
-powershell -ExecutionPolicy Bypass -File scripts\build.ps1 -NoViewer
+```cmd
+build.cmd              :: everything, Release
+build.cmd noviewer     :: skip the GUI viewer
+build.cmd fresh debug  :: options combine
 ```
 
-Produces `Dist\x64\Release\viewer.exe`. No Python is involved in the build or
-at runtime.
+Produces `Arena.exe`, `viewer.exe`, `gaitnet-mcp.exe` and `envcheck.exe` in
+`Dist\x64\Release`. No Python is involved in the build or at runtime.
+
+If vcpkg lives elsewhere, `set VCPKG_ROOT=C:\path\to\vcpkg` before building.
 
 ## Run the viewer
 
