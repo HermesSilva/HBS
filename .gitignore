@@ -37,6 +37,7 @@ data/Skeleton*.mass
 # the bone meshes. See ATTRIBUTION.md.
 data/atlas/bones/
 data/SkeletonFull.mass
+data/Body.mass
 data/atlas/bp3d/
 data/atlas/*.osim
 

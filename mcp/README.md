@@ -17,6 +17,7 @@ this project's `.mass` schema (adds the GaitNet `env.xml` config, the
 | `Batch.*` | `scale_bone`, `translate_subtree`, L/R symmetric |
 | `Complete.*` | finger/phalanx generation, `list_gaps`, symmetric fill |
 | `Skeleton.*` | the complete skeleton: anatomy table + generator, profile-aware |
+| `Muscles.*` | muscle paths from the reference models, mapped on by proportion |
 | `Atlas.*` | OpenSim `.osim` parse, normalized join, `validate`, `sync` |
 | `Groom.*` | hair groom params + PBD guide solver |
 | `Mcp.*` | MCP JSON-RPC dispatch (`McpServer`) + single-writer queue (`McpQueue`) |
@@ -25,7 +26,7 @@ this project's `.mass` schema (adds the GaitNet `env.xml` config, the
 `describe_model`, `get_node`, `get_muscle`, `select`, `muscles_of_body`,
 `muscles_crossing_joint`, `scale_bone`, `translate_subtree`, `rotate_joint`,
 `generate_fingers`, `list_gaps`, `list_inert_muscles`, `add_muscles`,
-`reanchor_waypoints`, `set_muscle`, `build_skeleton`, `check_skeleton`,
+`reanchor_waypoints`, `set_muscle`, `build_skeleton`, `check_skeleton`, `build_muscles`,
 `load_atlas`, `validate_anatomy`,
 `sync_from_atlas`, `save`, `load`. Mutating tools rebuild the index.
 

@@ -5,6 +5,7 @@
 #include "Complete.h"
 #include "BindSkin.h"
 #include "Skeleton.h"
+#include "Muscles.h"
 #include <fstream>
 
 namespace mass {
@@ -26,7 +27,7 @@ std::vector<std::string> McpServer::toolNames() {
              "muscles_of_body", "muscles_crossing_joint",
              "scale_bone", "translate_subtree", "rotate_joint",
              "generate_fingers", "list_gaps", "list_inert_muscles", "add_muscles", "reanchor_waypoints",
-             "build_skeleton", "check_skeleton",
+             "build_skeleton", "check_skeleton", "build_muscles",
              "load_atlas", "validate_anatomy", "sync_from_atlas",
              "bind_skin", "fit_bone", "set_body", "set_muscle",
              "save", "load" };
@@ -69,6 +70,18 @@ json McpServer::callTool(const std::string& name, const json& a, Model& m, Index
         if (!e.empty()) return { {"error", e} };
         json r = Skeleton::build(m, a.value("bones", std::string("data/atlas/bp3d")),
                                  profile, &e);
+        if (r.is_null()) return { {"error", e} };
+        mutated = true;
+        return r;
+    }
+    if (name == "build_muscles") {
+        // Muscle paths from the reference models, mapped onto this skeleton by
+        // proportion. Only muscles spanning two bones are generated.
+        BodyProfile profile;
+        std::string e;
+        if (a.contains("profile")) profile = BodyProfile::fromFile(a.value("profile", ""), &e);
+        if (!e.empty()) return { {"error", e} };
+        json r = Muscles::build(m, a.value("atlas", std::string("data/atlas")), profile, &e);
         if (r.is_null()) return { {"error", e} };
         mutated = true;
         return r;
