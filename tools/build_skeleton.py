@@ -54,6 +54,21 @@ NAMES = {
     "lunate":       ("Os lunatum", "Semilunar"),
     "triquetrum":   ("Os triquetrum", "Piramidal"),
     "pisiform":     ("Os pisiforme", "Pisiforme"),
+    "metacarpal1":  ("Os metacarpi I", "1º metacarpo"),
+    "index_proximal":  ("Phalanx proximalis II", "Falange proximal do indicador"),
+    "index_medial":    ("Phalanx media II", "Falange média do indicador"),
+    "index_distal":    ("Phalanx distalis II", "Falange distal do indicador"),
+    "middle_proximal": ("Phalanx proximalis III", "Falange proximal do médio"),
+    "middle_medial":   ("Phalanx media III", "Falange média do médio"),
+    "middle_distal":   ("Phalanx distalis III", "Falange distal do médio"),
+    "ring_proximal":   ("Phalanx proximalis IV", "Falange proximal do anelar"),
+    "ring_medial":     ("Phalanx media IV", "Falange média do anelar"),
+    "ring_distal":     ("Phalanx distalis IV", "Falange distal do anelar"),
+    "little_proximal": ("Phalanx proximalis V", "Falange proximal do mínimo"),
+    "little_medial":   ("Phalanx media V", "Falange média do mínimo"),
+    "little_distal":   ("Phalanx distalis V", "Falange distal do mínimo"),
+    "thumb_proximal":  ("Phalanx proximalis I", "Falange proximal do polegar"),
+    "thumb_distal":    ("Phalanx distalis I", "Falange distal do polegar"),
     "trapezium":    ("Os trapezium", "Trapézio"),
     "trapezoid":    ("Os trapezoideum", "Trapezoide"),
     "capitate":     ("Os capitatum", "Capitato"),
@@ -285,6 +300,13 @@ def build(osim, bonedir, meshpref="../atlas/bones/"):
         jtype, axis, lo, hi = joint_of(j)
         latin, pt = anatomical(name)
 
+        # A fused body anatomy does not fuse gets split into its own bones.
+        if name in EXPLODE:
+            nodes.extend(explode_body(name, bodies[name], R, t, lift,
+                                      bonedir, meshpref, jtype, jw_of(j, R, t),
+                                      "" if j is None else j["parent"]))
+            continue
+
         obj, size = "", [0.05, 0.05, 0.05]
         srcs = sources_for(bodies[name], bonedir)
         if srcs:
@@ -319,6 +341,157 @@ def build(osim, bonedir, meshpref="../atlas/bones/"):
             node["joint"].update({"lower": lo, "upper": hi})
         nodes.append(node)
     return nodes
+
+
+# ---------------------------------------------------------------- explode ----
+# Bodies the source model fuses that anatomy does not. Each entry lists the
+# child bones as (mesh stem, parent, joint type, limit), where the parent is
+# another entry or the fused body itself. Positions come free — the meshes are
+# already placed in the fused body's frame — and each joint is put at the
+# interface between the two bones, which is where the articulation is.
+#
+# The wrist and the intercarpal joints are synovial and do move, so by the
+# project's rule they are joints, not welds; the ranges are small but real.
+FINGERS = [("index", "metacarpal2"), ("middle", "metacarpal3"),
+           ("ring", "metacarpal4"), ("little", "metacarpal5")]
+
+def hand_tree():
+    t = [
+        # proximal row, off the forearm
+        ("scaphoid",   None,        "Ball",     0.35),
+        ("lunate",     None,        "Ball",     0.35),
+        ("triquetrum", "lunate",    "Ball",     0.20),
+        ("pisiform",   "triquetrum", "Ball",    0.15),
+        # distal row
+        ("trapezium",  "scaphoid",  "Ball",     0.20),
+        ("trapezoid",  "scaphoid",  "Ball",     0.15),
+        ("capitate",   "scaphoid",  "Ball",     0.20),
+        ("hamate",     "triquetrum", "Ball",    0.20),
+        # carpometacarpal: the thumb's is a saddle and mobile, 2-5 much less so
+        ("metacarpal1", "trapezium", "Ball",    0.90),
+        ("metacarpal2", "trapezoid", "Ball",    0.10),
+        ("metacarpal3", "capitate",  "Ball",    0.10),
+        ("metacarpal4", "hamate",    "Ball",    0.25),
+        ("metacarpal5", "hamate",    "Ball",    0.35),
+        # thumb: two phalanges
+        ("thumb_proximal", "metacarpal1",    "Ball",     1.00),
+        ("thumb_distal",   "thumb_proximal", "Revolute", 1.40),
+    ]
+    for finger, mc in FINGERS:
+        t += [
+            (finger + "_proximal", mc,                   "Ball",     1.60),
+            (finger + "_medial",   finger + "_proximal", "Revolute", 1.90),
+            (finger + "_distal",   finger + "_medial",   "Revolute", 1.50),
+        ]
+    return t
+
+
+EXPLODE = {"hand_r": hand_tree(), "hand_l": hand_tree()}
+
+
+def mesh_points(path):
+    return [[float(x) for x in l.split()[1:4]]
+            for l in open(path) if l.startswith("v ")]
+
+
+def interface(a, b):
+    """Midpoint of the closest pair between two meshes: where they articulate."""
+    best, pa, pb = 1e18, a[0], b[0]
+    step_a = max(1, len(a) // 400)
+    step_b = max(1, len(b) // 400)
+    for p in a[::step_a]:
+        for q in b[::step_b]:
+            d = (p[0]-q[0])**2 + (p[1]-q[1])**2 + (p[2]-q[2])**2
+            if d < best:
+                best, pa, pb = d, p, q
+    return [(pa[i] + pb[i]) / 2.0 for i in range(3)]
+
+
+
+def jw_of(j, R, t):
+    return j.get("world", (R, t)) if j else (R, t)
+
+
+def explode_body(name, body, R, t, lift, bonedir, meshpref, root_jtype, root_jw, root_parent):
+    """Split a fused body into the bones anatomy actually articulates.
+
+    The meshes are already positioned in the fused body's frame, so each bone's
+    place comes for free; the joint between two bones is put at the interface
+    between their meshes, which is where the articulation physically is.
+    """
+    side = name[-2:] if name[-2:] in ("_r", "_l") else ""
+    stems = {os.path.splitext(m)[0]: m for m in body["meshes"]}
+
+    def find(stem):
+        """The mesh whose name starts with this bone's stem, whatever the suffix."""
+        for k in stems:
+            if k.startswith(stem + "_") or k == stem:
+                return k
+        return None
+
+    tree = EXPLODE[name]
+    pts, placed = {}, {}
+    for stem, _parent, _jt, _lim in tree:
+        f = find(stem)
+        if not f:
+            continue
+        src = os.path.join(bonedir, f + ".obj")
+        if os.path.exists(src):
+            pts[stem] = mesh_points(src)
+            placed[stem] = src
+
+    total_pts = sum(len(v) for v in pts.values()) or 1
+    out = []
+    for stem, parent, jt, lim in tree:
+        if stem not in placed:
+            continue
+        bone = stem + side
+        fname = "_%s.obj" % bone
+        box = write_placed_mesh([placed[stem]], os.path.join(bonedir, fname), R, t, lift)
+        if not box:
+            continue
+        centre = [(box[0][i] + box[1][i]) / 2.0 for i in range(3)]
+
+        # joint at the interface with the parent; the root bones of the tree
+        # keep the fused body's own joint with the forearm
+        if parent is None or parent + side not in [n["id"] for n in out]:
+            jt_type, jw = (jt, (R, [c for c in centre])) if parent is None else (jt, (R, centre))
+            if parent is None:
+                jt_type, jw = root_jtype, root_jw
+                jpos = [root_jw[1][0], root_jw[1][1] + lift, root_jw[1][2]]
+                jparent = root_parent
+            else:
+                jpos, jparent = centre, parent + side
+        else:
+            mid = interface(pts[stem], pts[parent])
+            w = [mat_vec(R, mid)[i] + t[i] for i in range(3)]
+            jpos = [w[0], w[1] + lift, w[2]]
+            jparent = parent + side
+            jt_type = jt
+
+        latin, pt = anatomical(bone)
+        node = {
+            "id": bone, "parent": jparent,
+            "anatomy": {"latin": latin, "pt": pt},
+            "body": {
+                "type": "Box",
+                "mass": body["mass"] * len(pts[stem]) / total_pts,
+                "obj": meshpref + fname,
+                "size": [max(1e-3, box[1][i] - box[0][i]) for i in range(3)],
+                "contact": False, "color": [0.92, 0.90, 0.85, 1.0],
+                "transform": {"linear": R, "translation": centre},
+            },
+            "joint": {
+                "type": jt_type, "bvh": "",
+                "transform": {"linear": R, "translation": jpos},
+            },
+        }
+        if jt_type == "Revolute":
+            node["joint"].update({"axis": [0, 0, 1], "lower": -lim, "upper": 0.0})
+        elif jt_type == "Ball":
+            node["joint"].update({"lower": [-lim, -lim, -lim], "upper": [lim, lim, lim]})
+        out.append(node)
+    return out
 
 
 def check(nodes):
