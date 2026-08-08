@@ -1,0 +1,20 @@
+{
+  "_note": "Body profile: what the generator scales the anatomy to. The source models are one individual; a profile says which body we actually want, and every derived quantity — segment lengths, segment masses, muscle f0 — follows from it.",
+
+  "name": "Adulto masculino de referência",
+  "sex": "male",
+  "age_years": 30,
+
+  "height_m": 1.75,
+  "mass_kg": 75.0,
+
+  "_sources": {
+    "segment_mass": "de Leva 1996 (adjustments to Zatsiorsky-Seluyanov), fractions of body mass",
+    "muscle_volume": "Handsfield et al. 2014 — muscle volume scales with mass x height",
+    "muscle_architecture": "Ward et al. 2009 — PCSA and fascicle length"
+  },
+
+  "_note_scale": "Uniform for now: the reference skeleton is 1.75 m, so a profile of another height scales by the ratio. Per-segment anthropometric ratios (Drillis & Contini) are the refinement, not yet applied.",
+
+  "specific_tension_N_cm2": 60.0
+}

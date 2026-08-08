@@ -22,7 +22,8 @@ Conventions this tool reconciles:
     knee drives three rotations from a single coordinate and is still a hinge;
     a PinJoint names no axis because it is implicitly the joint frame's Z.
 
-    python tools/build_skeleton.py <model.osim> <out.mass> [--bones DIR] [--check]
+    python tools/build_skeleton.py <model.osim> <out.mass>
+           [--bones DIR] [--profile data/profiles/x.json] [--check]
 """
 import sys
 import os
@@ -494,14 +495,101 @@ def explode_body(name, body, R, t, lift, bonedir, meshpref, root_jtype, root_jw,
     return out
 
 
-def check(nodes):
+
+def body_extent(nodes, bonedir):
+    """(floor, top) in metres, measured from the meshes themselves.
+
+    The bone boxes are a loose bound — a body's translation is its origin, not
+    the centre of its shape — so anything that depends on real height has to
+    read the geometry.
+    """
+    lo, hi = 1e9, -1e9
+    seen = set()
+    for n in nodes:
+        obj = n["body"]["obj"]
+        if not obj or obj in seen:
+            continue
+        seen.add(obj)
+        path = os.path.join(bonedir, os.path.basename(obj))
+        if not os.path.exists(path):
+            continue
+        with open(path) as f:
+            for line in f:
+                if line.startswith("v "):
+                    y = float(line.split()[2]) / M_TO_CM
+                    lo = min(lo, y); hi = max(hi, y)
+    return (lo, hi) if lo < hi else (0.0, 0.0)
+
+
+# ---------------------------------------------------------------- profile ----
+# The source models are one individual. A profile says which body we want, and
+# every derived quantity follows from it: segment lengths from the height ratio,
+# segment masses so they sum to the profile's mass. Muscle f0 will follow the
+# same way, via the volume-scaling relation in Handsfield et al. 2014.
+DEFAULT_PROFILE = {
+    "name": "reference", "sex": "male", "height_m": 1.75, "mass_kg": 75.0,
+    "specific_tension_N_cm2": 60.0,
+}
+
+
+def load_profile(path):
+    if not path:
+        return dict(DEFAULT_PROFILE)
+    with open(path, encoding="utf-8") as f:
+        p = json.load(f)
+    out = dict(DEFAULT_PROFILE)
+    out.update({k: v for k, v in p.items() if not k.startswith("_")})
+    return out
+
+
+def apply_profile(nodes, profile, bonedir):
+    """Scale the built skeleton to the profile, meshes included.
+
+    Geometry scales by the height ratio and mass is redistributed so the
+    segments sum to the profile's mass, keeping the source model's proportions.
+    Per-segment anthropometric ratios are the refinement; a uniform factor is
+    honest about being one, and is exact when only the size changes.
+    """
+    if not nodes:
+        return 1.0, 1.0
+    floor, top = body_extent(nodes, bonedir)
+    built_h = top - floor
+    k = profile["height_m"] / built_h if built_h > 1e-6 else 1.0
+
+    built_m = sum(n["body"]["mass"] for n in nodes) or 1.0
+    km = profile["mass_kg"] / built_m
+
+    seen = set()
+    for n in nodes:
+        for key in ("body", "joint"):
+            t = n[key]["transform"]["translation"]
+            n[key]["transform"]["translation"] = [c * k for c in t]
+        n["body"]["size"] = [c * k for c in n["body"]["size"]]
+        n["body"]["mass"] *= km
+        obj = n["body"]["obj"]
+        if not obj or obj in seen:
+            continue
+        seen.add(obj)
+        path = os.path.join(bonedir, os.path.basename(obj))
+        out = []
+        with open(path) as f:
+            for line in f:
+                if line.startswith("v "):
+                    v = [float(x) * k for x in line.split()[1:4]]
+                    out.append("v %.6f %.6f %.6f\n" % tuple(v))
+                else:
+                    out.append(line)
+        with open(path, "w") as f:
+            f.writelines(out)
+    return k, km
+
+
+def check(nodes, bonedir):
     """Report what came out, so the tool can be corrected until it is right."""
     problems = []
     by_id = {n["id"]: n for n in nodes}
 
-    ys = [n["body"]["transform"]["translation"][1] for n in nodes]
-    floor = min(y - n["body"]["size"][1] for y, n in zip(ys, nodes))
-    top = max(y + n["body"]["size"][1] for y, n in zip(ys, nodes))
+    floor, top = body_extent(nodes, bonedir)
     print("bones      : %d (%d with a mesh, %d named)"
           % (len(nodes),
              sum(1 for n in nodes if n["body"]["obj"]),
@@ -509,8 +597,7 @@ def check(nodes):
     print("mass       : %.1f kg" % sum(n["body"]["mass"] for n in nodes))
     print("height     : %.2f m" % (top - floor))
 
-    lowest = min(n["body"]["transform"]["translation"][1] - n["body"]["size"][1] / 2
-                 for n in nodes if n["body"]["obj"])
+    lowest = floor
     if lowest < -0.05 or lowest > 0.35:
         problems.append("lowest bone at y=%.3f: model is not standing on the floor" % lowest)
 
@@ -560,10 +647,22 @@ def main():
         if a == "--bones" and i + 1 < len(sys.argv):
             bonedir = sys.argv[i + 1]
 
+    profile_path = ""
+    for i, a in enumerate(sys.argv):
+        if a == "--profile" and i + 1 < len(sys.argv):
+            profile_path = sys.argv[i + 1]
+    profile = load_profile(profile_path)
+
     nodes = build(args[0], bonedir)
+    k, km = apply_profile(nodes, profile, bonedir)
+    print("profile   : %s — %.2f m, %.1f kg (geometry x%.4f, mass x%.4f)"
+          % (profile["name"], profile["height_m"], profile["mass_kg"], k, km))
+
     model = {
         "massVersion": 1,
-        "meta": {"name": "HBS skeleton", "unit": "m", "specificTension_N_cm2": 60.0},
+        "meta": {"name": "HBS skeleton - " + profile["name"], "unit": "m",
+                 "specificTension_N_cm2": profile.get("specific_tension_N_cm2", 60.0),
+                 "profile": profile},
         "skeleton": nodes,
         "muscles": [], "motions": [], "fills": [],
         "params": {}, "scene": {}, "training": {}, "env": {},
@@ -573,7 +672,7 @@ def main():
     print("-> %s" % args[1])
 
     if "--check" in sys.argv:
-        return 2 if check(nodes) else 0
+        return 2 if check(nodes, bonedir) else 0
     return 0
 
 
