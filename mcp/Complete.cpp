@@ -1,6 +1,10 @@
 #include "Complete.h"
 #include "Kinematics.h"   // normalize
 #include <cstdio>
+#include <fstream>
+#include <sstream>
+#include <algorithm>
+#include <cmath>
 
 namespace mass {
 
@@ -8,6 +12,122 @@ using json = nlohmann::json;
 
 static Vec3 add(const Vec3& a, const Vec3& b) { return { a[0]+b[0], a[1]+b[1], a[2]+b[2] }; }
 static Vec3 mul(const Vec3& a, double s) { return { a[0]*s, a[1]*s, a[2]*s }; }
+
+// Vertex positions of an OBJ (positions only — the digit measurement is a point
+// cloud problem, faces do not matter).
+static bool loadObjPoints(const std::string& path, double scale, std::vector<Vec3>& out) {
+    std::ifstream f(path);
+    if (!f) return false;
+    std::string line;
+    while (std::getline(f, line)) {
+        if (line.size() < 3 || line[0] != 'v' || line[1] != ' ') continue;
+        std::istringstream ss(line.substr(2));
+        Vec3 v{};
+        ss >> v[0] >> v[1] >> v[2];
+        out.push_back({ v[0] * scale, v[1] * scale, v[2] * scale });
+    }
+    return !out.empty();
+}
+
+// One digit as found in the mesh, in the hand's (along, across) frame.
+struct MeshDigit {
+    double across;   // centre of the digit sideways
+    double base;     // where it separates from the palm
+    double tip;      // how far it reaches
+    double width;    // its own width sideways
+};
+
+// Find the digits by slicing the mesh along the hand and looking at where the
+// cross-section breaks into separate lumps: near the wrist it is one solid palm,
+// and past the knuckles it splits into the fingers. The slice with the most
+// lumps gives their lateral positions; each lump's own vertices then give how
+// far it reaches.
+static std::vector<MeshDigit> measureDigits(const std::vector<double>& along,
+                                            const std::vector<double>& across,
+                                            double gap) {
+    double a0 = *std::min_element(along.begin(), along.end());
+    double a1 = *std::max_element(along.begin(), along.end());
+    double span = a1 - a0;
+    if (span <= 0) return {};
+
+    std::vector<std::pair<double,double>> best;   // [lo,hi] across-ranges
+    double bestAt = 0;
+    for (int i = 8; i < 19; i++) {                // 40%..95% along the hand
+        double lo = a0 + span * i / 20.0, hi = a0 + span * (i + 1) / 20.0;
+        std::vector<double> w;
+        for (size_t k = 0; k < along.size(); k++)
+            if (along[k] >= lo && along[k] < hi) w.push_back(across[k]);
+        if (w.size() < 24) continue;
+        std::sort(w.begin(), w.end());
+        std::vector<std::pair<double,double>> lumps;
+        double s = w.front(), prev = w.front();
+        int n = 1;
+        for (size_t k = 1; k < w.size(); k++) {
+            if (w[k] - prev > gap) {
+                if (n >= 6) lumps.push_back({ s, prev });
+                s = w[k]; n = 0;
+            }
+            prev = w[k]; n++;
+        }
+        if (n >= 6) lumps.push_back({ s, prev });
+        if (lumps.size() > best.size()) { best = lumps; bestAt = lo; }
+    }
+    if (best.size() < 2) return {};
+
+    // The slice above identifies the digits reliably, but it sits past the
+    // knuckles, which would shorten every finger. So find the knuckle line
+    // separately: the most proximal slice where the long fingers already stand
+    // apart. The thumb is excluded from that count — it branches off much
+    // earlier and would make a proximal slice look split when the fingers are
+    // still fused. It is the outlying lump on the radial side.
+    double fingersLo = best.front().first, fingersHi = best.back().second;
+    size_t longFingers = best.size();
+    if (best.size() >= 5) {                        // drop the thumb's lump
+        fingersHi = best[best.size() - 1].second;
+        fingersLo = best[1].first;
+        longFingers = best.size() - 1;
+    }
+    double knuckle = bestAt;
+    for (int i = 4; i < 19; i++) {
+        double lo = a0 + span * i / 20.0, hi = a0 + span * (i + 1) / 20.0;
+        std::vector<double> w;
+        for (size_t k = 0; k < along.size(); k++)
+            if (along[k] >= lo && along[k] < hi && across[k] >= fingersLo && across[k] <= fingersHi)
+                w.push_back(across[k]);
+        if (w.size() < 24) continue;
+        std::sort(w.begin(), w.end());
+        size_t lumps = 1;
+        for (size_t k = 1; k < w.size(); k++) if (w[k] - w[k-1] > gap) lumps++;
+        if (lumps >= longFingers) { knuckle = lo; break; }
+    }
+
+    std::vector<MeshDigit> digits;
+    for (auto& lump : best) {
+        double lo = lump.first - gap * 0.5, hi = lump.second + gap * 0.5;
+        double refW = lump.second - lump.first;
+
+        // Tip: nothing lies beyond the fingers, so the far end of this lateral
+        // band is the fingertip.
+        double tip = bestAt, sum = 0;
+        int n = 0;
+        for (size_t k = 0; k < along.size(); k++) {
+            if (across[k] < lo || across[k] > hi) continue;
+            if (along[k] > tip) tip = along[k];
+            sum += across[k]; n++;
+        }
+        if (!n) continue;
+
+        // Base: the knuckle line, i.e. the slice where the digits first stand
+        // apart. Measuring each digit's own minimum instead runs into the palm,
+        // which spans every lateral position, and puts the knuckle at the wrist.
+        // The thumb's own base is left to the caller: it branches off much
+        // further back and this slice says nothing about it.
+        digits.push_back({ sum / n, knuckle, tip, refW });
+    }
+    std::sort(digits.begin(), digits.end(),
+              [](const MeshDigit& a, const MeshDigit& b) { return a.across > b.across; });
+    return digits;
+}
 
 std::vector<std::string> Complete::generateFingers(Model& m, const std::string& hand,
                                                    const FingerConfig& cfg) {
@@ -31,17 +151,78 @@ std::vector<std::string> Complete::generateFingers(Model& m, const std::string& 
         if (d[0] * d[0] + d[1] * d[1] + d[2] * d[2] > 1e-12) fwd = normalize(d);
     }
     const Vec3 spread { 0, 0, 1 };                     // across the hand's width
-    const Vec3 wrist = add(centre, mul(fwd, -0.5 * handLen));   // proximal edge
-    const double thickness = cfg.thickness * handWidth;
+    Vec3 wrist = add(centre, mul(fwd, -0.5 * handLen));         // proximal edge
+    double thickness = cfg.thickness * handWidth;
 
-    for (const FingerSpec& d : cfg.digits) {
-        // start at `base` along the hand, offset sideways by `lateral`
-        Vec3 root = add(add(wrist, mul(fwd, d.base * handLen)),
-                        mul(spread, d.lateral * handWidth));
+    // Measure the mesh when one is given: the bone's box does not describe the
+    // hand it stands for, and the digits have to land in the fingers already
+    // drawn there. `specs` mirrors cfg.digits but carries metres, not fractions.
+    struct Digit { std::string name; int phalanges; double across, base, length, width; };
+    std::vector<Digit> specs;
+    std::vector<Vec3> pts;
+    if (!cfg.mesh.empty() && loadObjPoints(cfg.mesh, cfg.meshScale, pts)) {
+        std::vector<double> along, across;
+        along.reserve(pts.size()); across.reserve(pts.size());
+        for (const Vec3& p : pts) {
+            along.push_back(p[0]*fwd[0] + p[1]*fwd[1] + p[2]*fwd[2]);
+            across.push_back(p[0]*spread[0] + p[1]*spread[1] + p[2]*spread[2]);
+        }
+        double meshLen = *std::max_element(along.begin(), along.end())
+                       - *std::min_element(along.begin(), along.end());
+        auto found = measureDigits(along, across, 0.006);
+        // Longest digits first in cfg.digits order minus the thumb: the mesh
+        // lumps come sorted from the radial side, which is the thumb's side.
+        std::vector<const FingerSpec*> table;
+        for (const FingerSpec& d : cfg.digits)
+            if (std::string(d.name) != "Thumb") table.push_back(&d);
+        if (found.size() >= table.size()) {
+            // the extra, most radial lump is the thumb when there is one
+            size_t off = found.size() - table.size();
+            if (off > 0) {
+                const FingerSpec* th = nullptr;
+                for (const FingerSpec& d : cfg.digits)
+                    if (std::string(d.name) == "Thumb") th = &d;
+                // The thumb branches off well before the knuckle line, so that
+                // line is no base for it. Its tip is measured like any other
+                // digit; its length comes from the table, scaled by the hand.
+                if (th) {
+                    double len = meshLen * th->length;
+                    specs.push_back({ th->name, th->phalanges, found[0].across,
+                                      found[0].tip - len, len, found[0].width });
+                }
+            }
+            for (size_t i = 0; i < table.size(); i++) {
+                const MeshDigit& g = found[i + off];
+                double len = meshLen * table[i]->length;
+                specs.push_back({ table[i]->name, table[i]->phalanges, g.across,
+                                  g.tip - len, len, g.width });
+            }
+        }
+    }
+    if (specs.empty()) {   // no mesh (or unreadable): fall back to the table
+        for (const FingerSpec& d : cfg.digits)
+            specs.push_back({ d.name, d.phalanges,
+                              (centre[2]*spread[2]) + d.lateral * handWidth,
+                              (wrist[0]*fwd[0] + wrist[1]*fwd[1] + wrist[2]*fwd[2])
+                                  + d.base * handLen,
+                              d.length * handLen / 0.62, thickness });
+    }
+
+    for (const Digit& d : specs) {
+        // `across` and `base` are already in the hand's frame, so rebuild the
+        // world point from them rather than from fractions of the bone box
+        Vec3 root { centre[0], centre[1], centre[2] };
+        double c_along  = centre[0]*fwd[0] + centre[1]*fwd[1] + centre[2]*fwd[2];
+        double c_across = centre[0]*spread[0] + centre[1]*spread[1] + centre[2]*spread[2];
+        root = add(root, mul(fwd,    d.base   - c_along));
+        root = add(root, mul(spread, d.across - c_across));
         // the thumb opposes rather than curls, so it hinges about another axis
-        const Vec3 axis = (std::string(d.name) == "Thumb") ? Vec3{ 0, 1, 0 } : spread;
+        const Vec3 axis = (d.name == "Thumb") ? Vec3{ 0, 1, 0 } : spread;
         std::string parent = hand;
-        double len = d.length * handLen;
+        // split the measured digit into phalanges that taper distally
+        double share = 0;
+        for (int k = 0; k < d.phalanges; k++) share += std::pow(cfg.taper, k);
+        double len = d.length / share;
         Vec3 at = root;
         // Name as "<hand-without-side><Digit><n><side>" — "HandIndex1L". The side
         // marker has to be the last character: sim/Character.cpp pairs muscles
@@ -54,7 +235,7 @@ std::vector<std::string> Complete::generateFingers(Model& m, const std::string& 
         }
         for (int jp = 0; jp < d.phalanges; jp++) {
             char name[96];
-            std::snprintf(name, sizeof(name), "%s%s%d%s", stem.c_str(), d.name, jp + 1, side.c_str());
+            std::snprintf(name, sizeof(name), "%s%s%d%s", stem.c_str(), d.name.c_str(), jp + 1, side.c_str());
             Node n;
             n.id = name;
             n.parent = parent;
@@ -63,9 +244,9 @@ std::vector<std::string> Complete::generateFingers(Model& m, const std::string& 
             n.joint.lower[0] = -cfg.flexLimit; n.joint.upper[0] = 0.0;
             n.joint.t.translation = at;
             n.body.type = "Box";
-            n.body.size = { len, thickness, thickness };
+            n.body.size = { len, d.width, d.width };
             n.body.t.translation = add(at, mul(fwd, 0.5 * len));
-            n.body.mass = cfg.density * len * thickness * thickness;
+            n.body.mass = cfg.density * len * d.width * d.width;
             m.skeleton.push_back(std::move(n));
             created.push_back(name);
             parent = name;
@@ -84,8 +265,19 @@ std::vector<std::string> Complete::generateFingersSymmetric(Model& m, const std:
     std::string other;
     if (!hand.empty() && hand.back() == 'R') other = hand.substr(0, hand.size()-1) + "L";
     else if (!hand.empty() && hand.back() == 'L') other = hand.substr(0, hand.size()-1) + "R";
-    if (!other.empty() && m.findNode(other)) {
-        auto more = generateFingers(m, other, cfg);
+    const Node* on = m.findNode(other);
+    if (!other.empty() && on) {
+        FingerConfig mc = cfg;
+        // The measurements are world coordinates, so the other hand has to be
+        // measured on its own mesh — handing it this one's would place its
+        // digits on this side of the body. Swap in the counterpart's own OBJ,
+        // keeping the directory the caller gave us.
+        if (!cfg.mesh.empty() && !on->body.obj.empty()) {
+            size_t slash = cfg.mesh.find_last_of("/\\");
+            mc.mesh = (slash == std::string::npos) ? on->body.obj
+                                                   : cfg.mesh.substr(0, slash + 1) + on->body.obj;
+        }
+        auto more = generateFingers(m, other, mc);
         created.insert(created.end(), more.begin(), more.end());
     }
     return created;

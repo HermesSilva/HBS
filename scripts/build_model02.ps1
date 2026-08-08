@@ -43,7 +43,9 @@ $calls = @(
 
     # --- missing bones first: the digital tendons insert on the phalanges, so
     # --- they have to exist before the muscles referencing them are added
-    'generate_fingers {"hand":"HandL","symmetric":true}'
+    # digits measured from the hand mesh: the bone's box is 13 cm long and 1 cm
+    # thick, while the mesh it stands for is 17 cm and already draws the fingers
+    'generate_fingers {"hand":"HandL","symmetric":true,"mesh":"data/OBJ/L_Hand.obj"}'
     'add_muscles {"path":"data/atlas/missing_muscles.json"}'
 
     # digital tendons now run to the phalanges instead of stopping at the palm

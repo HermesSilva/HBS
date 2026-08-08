@@ -22,15 +22,29 @@ struct FingerSpec {
 };
 
 struct FingerConfig {
-    // Anatomical digit table. Successive phalanges shorten by `taper`; the thumb
-    // sits proximally on the radial side and carries one segment less.
+    // Fallback digit table, used only when no mesh is given. The hand bone's box
+    // is a crude stand-in for the hand — on this model it is 13 cm long and 1 cm
+    // thick, while the mesh it represents is 17 cm long and already draws the
+    // fingers — so measuring the mesh is strongly preferred.
+    // `length` is the digit as a fraction of the whole hand, from adult
+    // measurements (thumb 5.2 cm, index 7.6, middle 8.8, ring 8.4, little 6.5 on
+    // a 17.4 cm hand). With a mesh, this is what sets each digit's length: its
+    // tip and its lateral position are measured, and the knuckle follows from
+    // the two. Detecting the knuckle line from the mesh instead proved
+    // unreliable — the palm spans every lateral position, so the fingers' bases
+    // are not cleanly separable.
     std::vector<FingerSpec> digits {
-        { "Thumb",  2,  0.42, 0.25, 0.24 },
-        { "Index",  3,  0.33, 1.00, 0.30 },
-        { "Middle", 3,  0.11, 1.00, 0.34 },
-        { "Ring",   3, -0.11, 1.00, 0.31 },
-        { "Little", 3, -0.32, 0.95, 0.24 },
+        { "Thumb",  2,  0.42, 0.25, 0.30 },
+        { "Index",  3,  0.33, 1.00, 0.44 },
+        { "Middle", 3,  0.11, 1.00, 0.51 },
+        { "Ring",   3, -0.11, 1.00, 0.48 },
+        { "Little", 3, -0.32, 0.95, 0.37 },
     };
+    // Mesh of the hand (OBJ). When set, the digits' lateral positions, where they
+    // start and how far each reaches are measured from it, so the generated bones
+    // land inside the fingers that are already drawn.
+    std::string mesh;
+    double meshScale  = 0.01;         // OBJ units -> metres (these are authored in cm)
     double taper      = 0.62;         // each phalanx relative to the previous one
     double thickness  = 0.16;         // phalanx cross-section, fraction of hand width
     double density    = 1000.0;       // kg/m^3 for mass = density*volume

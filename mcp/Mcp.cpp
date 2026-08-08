@@ -103,6 +103,8 @@ json McpServer::callTool(const std::string& name, const json& a, Model& m, Index
         cfg.thickness = a.value("thickness", cfg.thickness);
         cfg.density   = a.value("density", cfg.density);
         cfg.flexLimit = a.value("flexLimit", cfg.flexLimit);
+        cfg.mesh      = a.value("mesh", cfg.mesh);
+        cfg.meshScale = a.value("meshScale", cfg.meshScale);
         std::vector<FingerSpec> table;
         std::vector<std::string> names;   // backing storage for FingerSpec::name
         if (a.contains("digits")) {
