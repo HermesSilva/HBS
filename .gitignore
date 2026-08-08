@@ -31,6 +31,8 @@ Arena/Debug/
 # training sets: regenerated from the tracked .mass whenever the muscle
 # structure changes, so the model is the source of truth, not these
 data/train/
+# MCP screenshots
+shots/
 imgui.ini
 editor_tmp/
 Dist/

@@ -106,8 +106,14 @@ std::string McpHost::lastTool() {
     return mImpl->lastTool;
 }
 
+void McpHost::setHostTools(std::vector<std::string> names, HostTool fn) {
+    mHostToolNames = std::move(names);
+    mHostTool = std::move(fn);
+}
+
 int McpHost::poll(Model& model) {
     if (!mImpl || mImpl->queue.pending() == 0) return 0;
+    if (mHostTool) mImpl->server.setHostTools(mHostToolNames, mHostTool);
 
     // editor Model -> libmassedit Model, via the .mass JSON both agree on
     std::string err;

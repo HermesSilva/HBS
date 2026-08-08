@@ -137,6 +137,19 @@ void Renderer::shutdown(){
     if(mSkinVao) glDeleteVertexArrays(1,&mSkinVao);
     freeMeshes();
 }
+bool Renderer::readTarget(std::vector<unsigned char>& rgba, int& w, int& h) const {
+    if (mFbo == 0 || mFbW < 1 || mFbH < 1) return false;
+    w = mFbW; h = mFbH;
+    rgba.assign((size_t)w * h * 4, 0);
+    GLint prev = 0;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prev);
+    glBindFramebuffer(GL_FRAMEBUFFER, mFbo);
+    glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, rgba.data());
+    glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)prev);
+    return true;
+}
+
 void Renderer::beginTarget(int w, int h){
     if (w < 1) w = 1; if (h < 1) h = 1;
     if (mFbo == 0) glGenFramebuffers(1, &mFbo);

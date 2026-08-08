@@ -220,6 +220,11 @@ json McpServer::callTool(const std::string& name, const json& a, Model& m, Index
         return { {"ok", true}, {"bones", (int)m.skeleton.size()}, {"muscles", (int)m.muscles.size()} };
     }
 
+    // host-provided tools last, so they cannot shadow the model-editing ones
+    if (mHostTool) {
+        for (const auto& n : mHostToolNames)
+            if (n == name) return mHostTool(name, a);
+    }
     return json();  // unknown tool sentinel
 }
 
@@ -235,6 +240,7 @@ json McpServer::handle(const json& req, Model& m, Index& ix) {
     if (method == "tools/list") {
         json tools = json::array();
         for (const auto& n : McpServer::toolNames()) tools.push_back({ {"name", n} });
+        for (const auto& n : mHostToolNames) tools.push_back({ {"name", n} });
         return ok(id, { {"tools", tools} });
     }
     if (method == "tools/call") {

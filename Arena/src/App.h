@@ -5,6 +5,7 @@
 #include "SimBridge.h"
 #include "TrainBridge.h"
 #include "McpHost.h"
+#include <nlohmann/json.hpp>
 #include "SkinGen.h"
 #include "RiggedMesh.h"
 #include <vector>
@@ -209,6 +210,9 @@ private:
     // on the UI thread once per frame
     McpHost mMcp;
     void mcpPoll();
+    // `screenshot` over MCP: render the current view and write it to a PNG, so
+    // an agent driving the model can actually look at what it produced.
+    nlohmann::json mcpScreenshot(const nlohmann::json& args);
 
     // import an external (rigless) mesh as the skin, auto-scaled to the skeleton
     void importSkinMesh();                       // via file dialog

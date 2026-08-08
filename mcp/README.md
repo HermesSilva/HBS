@@ -86,6 +86,24 @@ Because the editor and `massedit` hold the same data in two separate `Model`
 types, each drain converts one into the other through the `.mass` JSON they both
 already agree on (`Model::ToJsonString` / `FromJsonString`).
 
+### `screenshot` — seeing what you edited
+
+Arena registers one tool of its own (via `McpServer::setHostTools`, for things
+only the host can do). It renders the current view and writes a PNG, so an agent
+driving the model can look at the result instead of inferring it:
+
+```
+screenshot {"path":"shots/front.png","width":900,"height":700}
+screenshot {"path":"shots/bones.png","muscles":false}     # skeleton only
+```
+
+`width`/`height` default to the live viewport; `bones`, `muscles`, `meshes`,
+`skin`, `muscleVolume`, `floor`, `waypoints` and `rigged` override visibility
+for that one shot and are restored afterwards, so asking for a particular view
+does not disturb what the user is looking at. A relative `path` resolves against
+the project root. The handler runs on the UI thread during the drain, so the
+reply only comes back once the file is on disk.
+
 ## `McpQueue`, the co-edit mechanism
 Any thread `submit`s a request and gets a `std::future`; the owner (Arena's UI
 thread) `drain`s once per frame, applying every request through `McpServer` on

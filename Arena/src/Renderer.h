@@ -18,6 +18,10 @@ struct Renderer {
     void endTarget();                 // unbind (back to default framebuffer)
     unsigned targetTexture() const { return mColorTex; }
 
+    // Read the offscreen target back as 8-bit RGBA, bottom-up like GL gives it.
+    // Returns false if nothing has been rendered into it yet.
+    bool readTarget(std::vector<unsigned char>& rgba, int& w, int& h) const;
+
     void begin(const M4& viewProj, const V3& eye);
     void line(const V3& a, const V3& b, const V3& color, float alpha = 1.0f);
     void point(const V3& p, const V3& color, float alpha = 1.0f);

@@ -18,6 +18,7 @@
 #include <memory>
 #include <string>
 #include <thread>
+#include <vector>
 
 namespace ed {
 
@@ -35,6 +36,12 @@ public:
     int served() const { return mServed.load(); }
     std::string lastTool();
 
+    // Tools only the editor can serve, registered before start(). They run on
+    // the UI thread during poll(), so a handler may touch GL and the app state
+    // freely. Arena uses this for `screenshot`.
+    using HostTool = mass::McpServer::HostTool;
+    void setHostTools(std::vector<std::string> names, HostTool fn);
+
     // UI thread, once per frame: apply every queued request to `model`.
     // Returns the number applied; a non-zero result means the model changed and
     // the caller should refresh whatever it derives from it.
@@ -47,6 +54,8 @@ private:
     std::atomic<bool> mRunning{false};
     std::atomic<int> mServed{0};
     unsigned short mPort = 8767;
+    std::vector<std::string> mHostToolNames;
+    HostTool mHostTool;
 };
 
 } // namespace ed

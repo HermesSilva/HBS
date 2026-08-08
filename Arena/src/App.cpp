@@ -14,6 +14,8 @@
 #include <filesystem>
 #include <system_error>
 #include <nlohmann/json.hpp>
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -28,6 +30,8 @@ bool App::init(GLFWwindow* win) {
     if (!mRen.init()) { std::fprintf(stderr, "renderer init failed\n"); return false; }
     newModel();
     mTrain.start(8765);   // telemetry server
+    mMcp.setHostTools({ "screenshot" },
+        [this](const std::string&, const nlohmann::json& a) { return mcpScreenshot(a); });
     mMcp.start(8767);     // in-process MCP: an agent edits the open model
     return true;
 }
@@ -36,6 +40,68 @@ void App::shutdown() {
     mMcp.stop();
     mTrain.stop();
     mRen.shutdown();
+}
+
+// `screenshot` tool: draw the current view into the offscreen target and write
+// it out as a PNG. Runs on the UI thread during the MCP drain, so the GL context
+// is current and the scene can simply be rendered again here — which also means
+// the reply only comes back once the file exists.
+//
+// Arguments: path (default Dist/arena.png), width/height (default the viewport's
+// current size), and the visibility toggles, so an agent can ask for a specific
+// view — "just the skeleton", say — without disturbing what the user sees.
+nlohmann::json App::mcpScreenshot(const nlohmann::json& args) {
+    const std::string path = args.value("path", std::string("arena.png"));
+    int w = args.value("width",  (int)mVpW);
+    int h = args.value("height", (int)mVpH);
+    if (w < 16) w = 16; if (h < 16) h = 16;
+    if (w > 4096) w = 4096; if (h > 4096) h = 4096;
+
+    // temporarily override what is drawn, restoring it before returning
+    const bool oBones = mShowBones, oMuscles = mShowMuscles, oMesh = mShowMesh,
+               oSkin = mShowSkin, oVol = mMuscleVolume, oGrid = mDrawGrid,
+               oWp = mShowWaypoints, oRig = mShowRigged;
+    mShowBones     = args.value("bones",     mShowBones);
+    mShowMuscles   = args.value("muscles",   mShowMuscles);
+    mShowMesh      = args.value("meshes",    mShowMesh);
+    mShowSkin      = args.value("skin",      mShowSkin);
+    mMuscleVolume  = args.value("muscleVolume", mMuscleVolume);
+    mDrawGrid      = args.value("floor",     mDrawGrid);
+    mShowWaypoints = args.value("waypoints", mShowWaypoints);
+    mShowRigged    = args.value("rigged",    mShowRigged);
+
+    // drawScene supersamples the offscreen target 2x for AA, so ask it for half
+    // of what was requested and the PNG comes out at exactly the requested size.
+    const float ss = 2.0f;
+    const float pvw = mVpW, pvh = mVpH;
+    mVpW = (float)w / ss; mVpH = (float)h / ss;
+    drawScene();
+    mVpW = pvw; mVpH = pvh;
+
+    std::vector<unsigned char> rgba;
+    int gw = 0, gh = 0;
+    bool got = mRen.readTarget(rgba, gw, gh);
+
+    mShowBones = oBones; mShowMuscles = oMuscles; mShowMesh = oMesh;
+    mShowSkin = oSkin; mMuscleVolume = oVol; mDrawGrid = oGrid;
+    mShowWaypoints = oWp; mShowRigged = oRig;
+
+    if (!got) return { {"ok", false}, {"error", "nothing rendered yet"} };
+
+    // GL hands back bottom-up rows; PNG wants them top-down
+    std::vector<unsigned char> flipped((size_t)gw * gh * 4);
+    for (int y = 0; y < gh; y++)
+        std::memcpy(&flipped[(size_t)y * gw * 4],
+                    &rgba[(size_t)(gh - 1 - y) * gw * 4], (size_t)gw * 4);
+
+    std::filesystem::path out(path);
+    if (out.is_relative()) out = std::filesystem::path(mDataRoot) / out;
+    std::error_code ec;
+    std::filesystem::create_directories(out.parent_path(), ec);
+    if (!stbi_write_png(out.string().c_str(), gw, gh, 4, flipped.data(), gw * 4))
+        return { {"ok", false}, {"error", "cannot write " + out.string()} };
+
+    return { {"ok", true}, {"path", out.string()}, {"width", gw}, {"height", gh} };
 }
 
 // Apply whatever an agent queued over the MCP port. Runs on the UI thread, so
