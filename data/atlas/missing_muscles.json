@@ -1106,7 +1106,7 @@
           ]
         },
         {
-          "body": "HandL_Index3",
+          "body": "HandIndex3L",
           "p": [
             1.0155,
             1.4603,
@@ -1171,7 +1171,7 @@
           ]
         },
         {
-          "body": "HandL_Ring3",
+          "body": "HandRing3L",
           "p": [
             1.0178,
             1.4602,
@@ -1228,7 +1228,7 @@
           ]
         },
         {
-          "body": "HandL_Index3",
+          "body": "HandIndex3L",
           "p": [
             1.0155,
             1.4603,
@@ -1285,7 +1285,7 @@
           ]
         },
         {
-          "body": "HandL_Ring3",
+          "body": "HandRing3L",
           "p": [
             1.0178,
             1.4602,
@@ -1342,7 +1342,7 @@
           ]
         },
         {
-          "body": "HandL_Little3",
+          "body": "HandLittle3L",
           "p": [
             0.9951,
             1.4609,
@@ -1399,7 +1399,7 @@
           ]
         },
         {
-          "body": "HandL_Index2",
+          "body": "HandIndex2L",
           "p": [
             0.9961,
             1.4608,
@@ -1456,7 +1456,7 @@
           ]
         },
         {
-          "body": "HandL_Ring2",
+          "body": "HandRing2L",
           "p": [
             0.9978,
             1.4608,
@@ -1513,7 +1513,7 @@
           ]
         },
         {
-          "body": "HandL_Little2",
+          "body": "HandLittle2L",
           "p": [
             0.9796,
             1.4613,

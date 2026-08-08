@@ -38,6 +38,9 @@ if(GAITNET_BUILD_VIEWER)
   add_subdirectory( viewer )
 endif()
 
+# envcheck: validates a training set against the real engine (needs sim only).
+add_subdirectory( tools/envcheck )
+
 # Model-editing core + MCP server (pure C++17 over the .mass project; no
 # DART/Python). Comes before the editor, which links the `massedit` library to
 # host the same tools in-process.

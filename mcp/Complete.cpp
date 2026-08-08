@@ -43,9 +43,18 @@ std::vector<std::string> Complete::generateFingers(Model& m, const std::string& 
         std::string parent = hand;
         double len = d.length * handLen;
         Vec3 at = root;
+        // Name as "<hand-without-side><Digit><n><side>" — "HandIndex1L". The side
+        // marker has to be the last character: sim/Character.cpp pairs muscles
+        // L/R and compares their bones ignoring exactly one trailing character,
+        // so a marker anywhere else ("HandL_Index1") makes it reject the model.
+        std::string stem = hand, side;
+        if (!hand.empty() && (hand.back() == 'L' || hand.back() == 'R')) {
+            side = hand.back();
+            stem = hand.substr(0, hand.size() - 1);
+        }
         for (int jp = 0; jp < d.phalanges; jp++) {
             char name[96];
-            std::snprintf(name, sizeof(name), "%s_%s%d", hand.c_str(), d.name, jp + 1);
+            std::snprintf(name, sizeof(name), "%s%s%d%s", stem.c_str(), d.name, jp + 1, side.c_str());
             Node n;
             n.id = name;
             n.parent = parent;

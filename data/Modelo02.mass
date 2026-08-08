@@ -3285,7 +3285,7 @@
           ]
         },
         {
-          "body": "HandL_Little3",
+          "body": "HandLittle3L",
           "p": [
             0.9951024802097254,
             1.4608609881569081,
@@ -3354,7 +3354,7 @@
           ]
         },
         {
-          "body": "HandR_Little3",
+          "body": "HandLittle3R",
           "p": [
             -0.9951024802097254,
             1.4608609881569081,
@@ -4023,7 +4023,7 @@
           ]
         },
         {
-          "body": "HandL_Middle3",
+          "body": "HandMiddle3L",
           "p": [
             1.024837565407722,
             1.4600408058162433,
@@ -4092,7 +4092,7 @@
           ]
         },
         {
-          "body": "HandR_Middle3",
+          "body": "HandMiddle3R",
           "p": [
             -1.024837565407722,
             1.4600408058162433,
@@ -4283,7 +4283,7 @@
           ]
         },
         {
-          "body": "HandL_Thumb1",
+          "body": "HandThumb1L",
           "p": [
             0.864581891377305,
             1.4644611353009531,
@@ -4336,7 +4336,7 @@
           ]
         },
         {
-          "body": "HandR_Thumb1",
+          "body": "HandThumb1R",
           "p": [
             -0.864581891377305,
             1.4644611353009531,
@@ -4397,7 +4397,7 @@
           ]
         },
         {
-          "body": "HandL_Thumb2",
+          "body": "HandThumb2L",
           "p": [
             0.8895818938100121,
             1.463771560666297,
@@ -4458,7 +4458,7 @@
           ]
         },
         {
-          "body": "HandR_Thumb2",
+          "body": "HandThumb2R",
           "p": [
             -0.8895818938100121,
             1.463771560666297,
@@ -5357,7 +5357,7 @@
           ]
         },
         {
-          "body": "HandL_Middle3",
+          "body": "HandMiddle3L",
           "p": [
             1.024837565407722,
             1.4600408058162433,
@@ -5418,7 +5418,7 @@
           ]
         },
         {
-          "body": "HandR_Middle3",
+          "body": "HandMiddle3R",
           "p": [
             -1.024837565407722,
             1.4600408058162433,
@@ -5755,7 +5755,7 @@
           ]
         },
         {
-          "body": "HandL_Thumb2",
+          "body": "HandThumb2L",
           "p": [
             0.8895818938100121,
             1.463771560666297,
@@ -5816,7 +5816,7 @@
           ]
         },
         {
-          "body": "HandR_Thumb2",
+          "body": "HandThumb2R",
           "p": [
             -0.8895818938100121,
             1.463771560666297,
@@ -18219,7 +18219,7 @@
           ]
         },
         {
-          "body": "HandL_Middle2",
+          "body": "HandMiddle2L",
           "p": [
             1.0028792299376608,
             1.460646482203683,
@@ -18280,7 +18280,7 @@
           ]
         },
         {
-          "body": "HandR_Middle2",
+          "body": "HandMiddle2R",
           "p": [
             -1.0028792299376608,
             1.460646482203683,
@@ -18783,7 +18783,7 @@
           ]
         },
         {
-          "body": "HandL_Index3",
+          "body": "HandIndex3L",
           "p": [
             1.0155,
             1.4603,
@@ -18852,7 +18852,7 @@
           ]
         },
         {
-          "body": "HandR_Index3",
+          "body": "HandIndex3R",
           "p": [
             -1.0155,
             1.4603,
@@ -18921,7 +18921,7 @@
           ]
         },
         {
-          "body": "HandL_Ring3",
+          "body": "HandRing3L",
           "p": [
             1.0178,
             1.4602,
@@ -18990,7 +18990,7 @@
           ]
         },
         {
-          "body": "HandR_Ring3",
+          "body": "HandRing3R",
           "p": [
             -1.0178,
             1.4602,
@@ -19051,7 +19051,7 @@
           ]
         },
         {
-          "body": "HandL_Index3",
+          "body": "HandIndex3L",
           "p": [
             1.0155,
             1.4603,
@@ -19112,7 +19112,7 @@
           ]
         },
         {
-          "body": "HandR_Index3",
+          "body": "HandIndex3R",
           "p": [
             -1.0155,
             1.4603,
@@ -19173,7 +19173,7 @@
           ]
         },
         {
-          "body": "HandL_Ring3",
+          "body": "HandRing3L",
           "p": [
             1.0178,
             1.4602,
@@ -19234,7 +19234,7 @@
           ]
         },
         {
-          "body": "HandR_Ring3",
+          "body": "HandRing3R",
           "p": [
             -1.0178,
             1.4602,
@@ -19295,7 +19295,7 @@
           ]
         },
         {
-          "body": "HandL_Little3",
+          "body": "HandLittle3L",
           "p": [
             0.9951,
             1.4609,
@@ -19356,7 +19356,7 @@
           ]
         },
         {
-          "body": "HandR_Little3",
+          "body": "HandLittle3R",
           "p": [
             -0.9951,
             1.4609,
@@ -19417,7 +19417,7 @@
           ]
         },
         {
-          "body": "HandL_Index2",
+          "body": "HandIndex2L",
           "p": [
             0.9961,
             1.4608,
@@ -19478,7 +19478,7 @@
           ]
         },
         {
-          "body": "HandR_Index2",
+          "body": "HandIndex2R",
           "p": [
             -0.9961,
             1.4608,
@@ -19539,7 +19539,7 @@
           ]
         },
         {
-          "body": "HandL_Ring2",
+          "body": "HandRing2L",
           "p": [
             0.9978,
             1.4608,
@@ -19600,7 +19600,7 @@
           ]
         },
         {
-          "body": "HandR_Ring2",
+          "body": "HandRing2R",
           "p": [
             -0.9978,
             1.4608,
@@ -19661,7 +19661,7 @@
           ]
         },
         {
-          "body": "HandL_Little2",
+          "body": "HandLittle2L",
           "p": [
             0.9796,
             1.4613,
@@ -19722,7 +19722,7 @@
           ]
         },
         {
-          "body": "HandR_Little2",
+          "body": "HandLittle2R",
           "p": [
             -0.9796,
             1.4613,
@@ -23085,7 +23085,7 @@
         },
         "type": "Box"
       },
-      "id": "HandL_Thumb1",
+      "id": "HandThumb1L",
       "joint": {
         "axis": [
           0.0,
@@ -23154,7 +23154,7 @@
         },
         "type": "Box"
       },
-      "id": "HandL_Thumb2",
+      "id": "HandThumb2L",
       "joint": {
         "axis": [
           0.0,
@@ -23184,7 +23184,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandL_Thumb1",
+      "parent": "HandThumb1L",
       "uid": "N0025"
     },
     {
@@ -23223,7 +23223,7 @@
         },
         "type": "Box"
       },
-      "id": "HandL_Index1",
+      "id": "HandIndex1L",
       "joint": {
         "axis": [
           0.0,
@@ -23292,7 +23292,7 @@
         },
         "type": "Box"
       },
-      "id": "HandL_Index2",
+      "id": "HandIndex2L",
       "joint": {
         "axis": [
           0.0,
@@ -23322,7 +23322,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandL_Index1",
+      "parent": "HandIndex1L",
       "uid": "N0027"
     },
     {
@@ -23361,7 +23361,7 @@
         },
         "type": "Box"
       },
-      "id": "HandL_Index3",
+      "id": "HandIndex3L",
       "joint": {
         "axis": [
           0.0,
@@ -23391,7 +23391,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandL_Index2",
+      "parent": "HandIndex2L",
       "uid": "N0028"
     },
     {
@@ -23430,7 +23430,7 @@
         },
         "type": "Box"
       },
-      "id": "HandL_Middle1",
+      "id": "HandMiddle1L",
       "joint": {
         "axis": [
           0.0,
@@ -23499,7 +23499,7 @@
         },
         "type": "Box"
       },
-      "id": "HandL_Middle2",
+      "id": "HandMiddle2L",
       "joint": {
         "axis": [
           0.0,
@@ -23529,7 +23529,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandL_Middle1",
+      "parent": "HandMiddle1L",
       "uid": "N0030"
     },
     {
@@ -23568,7 +23568,7 @@
         },
         "type": "Box"
       },
-      "id": "HandL_Middle3",
+      "id": "HandMiddle3L",
       "joint": {
         "axis": [
           0.0,
@@ -23598,7 +23598,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandL_Middle2",
+      "parent": "HandMiddle2L",
       "uid": "N0031"
     },
     {
@@ -23637,7 +23637,7 @@
         },
         "type": "Box"
       },
-      "id": "HandL_Ring1",
+      "id": "HandRing1L",
       "joint": {
         "axis": [
           0.0,
@@ -23706,7 +23706,7 @@
         },
         "type": "Box"
       },
-      "id": "HandL_Ring2",
+      "id": "HandRing2L",
       "joint": {
         "axis": [
           0.0,
@@ -23736,7 +23736,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandL_Ring1",
+      "parent": "HandRing1L",
       "uid": "N0033"
     },
     {
@@ -23775,7 +23775,7 @@
         },
         "type": "Box"
       },
-      "id": "HandL_Ring3",
+      "id": "HandRing3L",
       "joint": {
         "axis": [
           0.0,
@@ -23805,7 +23805,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandL_Ring2",
+      "parent": "HandRing2L",
       "uid": "N0034"
     },
     {
@@ -23844,7 +23844,7 @@
         },
         "type": "Box"
       },
-      "id": "HandL_Little1",
+      "id": "HandLittle1L",
       "joint": {
         "axis": [
           0.0,
@@ -23913,7 +23913,7 @@
         },
         "type": "Box"
       },
-      "id": "HandL_Little2",
+      "id": "HandLittle2L",
       "joint": {
         "axis": [
           0.0,
@@ -23943,7 +23943,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandL_Little1",
+      "parent": "HandLittle1L",
       "uid": "N0036"
     },
     {
@@ -23982,7 +23982,7 @@
         },
         "type": "Box"
       },
-      "id": "HandL_Little3",
+      "id": "HandLittle3L",
       "joint": {
         "axis": [
           0.0,
@@ -24012,7 +24012,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandL_Little2",
+      "parent": "HandLittle2L",
       "uid": "N0037"
     },
     {
@@ -24051,7 +24051,7 @@
         },
         "type": "Box"
       },
-      "id": "HandR_Thumb1",
+      "id": "HandThumb1R",
       "joint": {
         "axis": [
           0.0,
@@ -24120,7 +24120,7 @@
         },
         "type": "Box"
       },
-      "id": "HandR_Thumb2",
+      "id": "HandThumb2R",
       "joint": {
         "axis": [
           0.0,
@@ -24150,7 +24150,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandR_Thumb1",
+      "parent": "HandThumb1R",
       "uid": "N0039"
     },
     {
@@ -24189,7 +24189,7 @@
         },
         "type": "Box"
       },
-      "id": "HandR_Index1",
+      "id": "HandIndex1R",
       "joint": {
         "axis": [
           0.0,
@@ -24258,7 +24258,7 @@
         },
         "type": "Box"
       },
-      "id": "HandR_Index2",
+      "id": "HandIndex2R",
       "joint": {
         "axis": [
           0.0,
@@ -24288,7 +24288,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandR_Index1",
+      "parent": "HandIndex1R",
       "uid": "N0041"
     },
     {
@@ -24327,7 +24327,7 @@
         },
         "type": "Box"
       },
-      "id": "HandR_Index3",
+      "id": "HandIndex3R",
       "joint": {
         "axis": [
           0.0,
@@ -24357,7 +24357,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandR_Index2",
+      "parent": "HandIndex2R",
       "uid": "N0042"
     },
     {
@@ -24396,7 +24396,7 @@
         },
         "type": "Box"
       },
-      "id": "HandR_Middle1",
+      "id": "HandMiddle1R",
       "joint": {
         "axis": [
           0.0,
@@ -24465,7 +24465,7 @@
         },
         "type": "Box"
       },
-      "id": "HandR_Middle2",
+      "id": "HandMiddle2R",
       "joint": {
         "axis": [
           0.0,
@@ -24495,7 +24495,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandR_Middle1",
+      "parent": "HandMiddle1R",
       "uid": "N0044"
     },
     {
@@ -24534,7 +24534,7 @@
         },
         "type": "Box"
       },
-      "id": "HandR_Middle3",
+      "id": "HandMiddle3R",
       "joint": {
         "axis": [
           0.0,
@@ -24564,7 +24564,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandR_Middle2",
+      "parent": "HandMiddle2R",
       "uid": "N0045"
     },
     {
@@ -24603,7 +24603,7 @@
         },
         "type": "Box"
       },
-      "id": "HandR_Ring1",
+      "id": "HandRing1R",
       "joint": {
         "axis": [
           0.0,
@@ -24672,7 +24672,7 @@
         },
         "type": "Box"
       },
-      "id": "HandR_Ring2",
+      "id": "HandRing2R",
       "joint": {
         "axis": [
           0.0,
@@ -24702,7 +24702,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandR_Ring1",
+      "parent": "HandRing1R",
       "uid": "N0047"
     },
     {
@@ -24741,7 +24741,7 @@
         },
         "type": "Box"
       },
-      "id": "HandR_Ring3",
+      "id": "HandRing3R",
       "joint": {
         "axis": [
           0.0,
@@ -24771,7 +24771,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandR_Ring2",
+      "parent": "HandRing2R",
       "uid": "N0048"
     },
     {
@@ -24810,7 +24810,7 @@
         },
         "type": "Box"
       },
-      "id": "HandR_Little1",
+      "id": "HandLittle1R",
       "joint": {
         "axis": [
           0.0,
@@ -24879,7 +24879,7 @@
         },
         "type": "Box"
       },
-      "id": "HandR_Little2",
+      "id": "HandLittle2R",
       "joint": {
         "axis": [
           0.0,
@@ -24909,7 +24909,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandR_Little1",
+      "parent": "HandLittle1R",
       "uid": "N0050"
     },
     {
@@ -24948,7 +24948,7 @@
         },
         "type": "Box"
       },
-      "id": "HandR_Little3",
+      "id": "HandLittle3R",
       "joint": {
         "axis": [
           0.0,
@@ -24978,7 +24978,7 @@
         "type": "Revolute",
         "upper": 0.0
       },
-      "parent": "HandR_Little2",
+      "parent": "HandLittle2R",
       "uid": "N0051"
     }
   ],

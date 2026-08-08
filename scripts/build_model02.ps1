@@ -47,13 +47,13 @@ $calls = @(
     'add_muscles {"path":"data/atlas/missing_muscles.json"}'
 
     # digital tendons now run to the phalanges instead of stopping at the palm
-    'reanchor_waypoints {"muscle":"L_Extensor_Digitorum1","from":"HandL","to":"HandL_Middle3","lastOnly":true,"snap":true}'
-    'reanchor_waypoints {"muscle":"L_Flexor_Digitorum_Profundus2","from":"HandL","to":"HandL_Middle3","lastOnly":true,"snap":true}'
-    'reanchor_waypoints {"muscle":"L_Flexor_Digitorum_Superficialis","from":"HandL","to":"HandL_Middle2","lastOnly":true,"snap":true}'
-    'reanchor_waypoints {"muscle":"L_Extensor_Digiti_Minimi","from":"HandL","to":"HandL_Little3","lastOnly":true,"snap":true}'
-    'reanchor_waypoints {"muscle":"L_Extensor_Pollicis_Longus","from":"HandL","to":"HandL_Thumb2","lastOnly":true,"snap":true}'
-    'reanchor_waypoints {"muscle":"L_Flexor_Pollicis_Longus","from":"HandL","to":"HandL_Thumb2","lastOnly":true,"snap":true}'
-    'reanchor_waypoints {"muscle":"L_Extensor_Pollicis_Brevis","from":"HandL","to":"HandL_Thumb1","lastOnly":true,"snap":true}'
+    'reanchor_waypoints {"muscle":"L_Extensor_Digitorum1","from":"HandL","to":"HandMiddle3L","lastOnly":true,"snap":true}'
+    'reanchor_waypoints {"muscle":"L_Flexor_Digitorum_Profundus2","from":"HandL","to":"HandMiddle3L","lastOnly":true,"snap":true}'
+    'reanchor_waypoints {"muscle":"L_Flexor_Digitorum_Superficialis","from":"HandL","to":"HandMiddle2L","lastOnly":true,"snap":true}'
+    'reanchor_waypoints {"muscle":"L_Extensor_Digiti_Minimi","from":"HandL","to":"HandLittle3L","lastOnly":true,"snap":true}'
+    'reanchor_waypoints {"muscle":"L_Extensor_Pollicis_Longus","from":"HandL","to":"HandThumb2L","lastOnly":true,"snap":true}'
+    'reanchor_waypoints {"muscle":"L_Flexor_Pollicis_Longus","from":"HandL","to":"HandThumb2L","lastOnly":true,"snap":true}'
+    'reanchor_waypoints {"muscle":"L_Extensor_Pollicis_Brevis","from":"HandL","to":"HandThumb1L","lastOnly":true,"snap":true}'
 
     # --- Hill parameters and PCSA from the atlas, then write it out ---
     'sync_from_atlas {"fillHill":true}'

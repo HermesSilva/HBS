@@ -666,7 +666,11 @@ bool App::exportTrainingSet(std::string* outDir, std::string* err) {
     std::error_code fec;
     std::filesystem::create_directories(dir, fec);
     if (fec) { if (err) *err = fec.message(); return false; }
-    if (!ExportToLegacy(mModel, dir, err)) return false;
+    // absPaths: without it env.xml keeps the model's own "../data/..." references
+    // and points at the project-wide skeleton and muscle files instead of the
+    // ones just written beside it — a training run would silently use the wrong
+    // model. The cost is that a set is bound to this machine's paths.
+    if (!ExportToLegacy(mModel, dir, err, /*absPaths*/ true, mDataRoot)) return false;
 
     nlohmann::json manifest = {
         { "signature",  stamp },
