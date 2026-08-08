@@ -36,6 +36,8 @@ data/Skeleton*.mass
 # scriptsetch_atlas.ps1 gets the reference models, scriptsetch_bones.ps1
 # the bone meshes. See ATTRIBUTION.md.
 data/atlas/bones/
+data/SkeletonFull.mass
+data/atlas/bp3d/
 data/atlas/*.osim
 
 # MCP screenshots
