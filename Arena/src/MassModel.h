@@ -47,6 +47,9 @@ struct Node {
     std::string id;              // unique name
     std::string parent;          // parent id, "" = root (None)
     bool endeffector = false;    // reward end-effector flag (human.xml endeffector="True")
+    // anatomical naming, as for muscles: Terminologia Anatomica and Portuguese
+    std::string latin;
+    std::string pt;
     Body body;
     Joint joint;
 };

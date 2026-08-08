@@ -80,6 +80,8 @@ static json toJson(const Model& m) {
         if (n.joint.hasKp) joint["kp"] = j(n.joint.kp);
         if (n.joint.hasKv) joint["kv"] = j(n.joint.kv);
         json jn = { {"id", n.id}, {"parent", n.parent}, {"body", body}, {"joint", joint} };
+        if (!n.latin.empty() || !n.pt.empty())
+            jn["anatomy"] = { {"latin", n.latin}, {"pt", n.pt} };
         if (!n.uid.empty()) jn["uid"] = n.uid;
         if (n.endeffector) jn["endeffector"] = true;
         sk.push_back(jn);
@@ -190,6 +192,13 @@ static Model fromJson(const json& root) {
         Node nd;
         nd.id = n.value("id", "");
         nd.uid = n.value("uid", "");
+        if (n.contains("anatomy")) {
+
+            nd.latin = n["anatomy"].value("latin", "");
+
+            nd.pt    = n["anatomy"].value("pt", "");
+
+        }
         nd.parent = n.value("parent", "");
         nd.endeffector = n.value("endeffector", false);
         const auto& b = n["body"];

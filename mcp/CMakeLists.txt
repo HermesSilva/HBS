@@ -10,7 +10,7 @@ find_package(boost_asio CONFIG REQUIRED)
 
 set(_lib_srcs
     MassModel.cpp Index.cpp Kinematics.cpp DofMap.cpp Batch.cpp
-    Complete.cpp Query.cpp Atlas.cpp Groom.cpp BindSkin.cpp Mcp.cpp)
+    Complete.cpp Query.cpp Atlas.cpp Groom.cpp BindSkin.cpp Skeleton.cpp Mcp.cpp)
 
 # The editing core, shared by the standalone server and the Arena editor (which
 # hosts the same tools in-process so an agent can drive the open model).

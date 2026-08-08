@@ -164,6 +164,10 @@ static Model fromJson(const json& root) {
     for (const auto& n : root.value("skeleton", json::array())) {
         Node nd;
         nd.id = n.value("id", "");
+        if (n.contains("anatomy")) {
+            nd.latin = n["anatomy"].value("latin", "");
+            nd.pt    = n["anatomy"].value("pt", "");
+        }
         nd.parent = n.value("parent", "");
         nd.endeffector = n.value("endeffector", false);
         const auto& b = n["body"];
