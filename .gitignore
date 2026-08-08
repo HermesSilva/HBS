@@ -31,9 +31,11 @@ Arena/Debug/
 # training sets: regenerated from the tracked .mass whenever the muscle
 # structure changes, so the model is the source of truth, not these
 data/train/
-# bone meshes converted from OpenSim: derived data, recreate with
-# scriptsetch_bones.ps1
+# third-party anatomical data: fetched, never redistributed here.
+# scriptsetch_atlas.ps1 gets the reference models, scriptsetch_bones.ps1
+# the bone meshes. See ATTRIBUTION.md.
 data/atlas/bones/
+data/atlas/*.osim
 
 # MCP screenshots
 shots/

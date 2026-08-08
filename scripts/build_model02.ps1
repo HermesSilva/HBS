@@ -13,6 +13,11 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+
+# The reference models are fetched, not committed (see ATTRIBUTION.md).
+if (-not (Test-Path "$(Split-Path -Parent $PSScriptRoot)\datatlas\gait2392_thelen2003muscle.osim")) {
+    & "$PSScriptRootetch_atlas.ps1"
+}
 $root = Split-Path -Parent $PSScriptRoot
 $exe  = "$root\Dist\x64\Release\gaitnet-mcp.exe"
 if (-not (Test-Path $exe)) { throw "build the MCP first: cmake --build build --config Release" }
