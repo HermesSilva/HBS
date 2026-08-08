@@ -2,6 +2,8 @@
 #include <tinyxml2.h>
 #include <cctype>
 #include <cmath>
+#include <fstream>
+#include <set>
 
 namespace mass {
 using json = nlohmann::json;
@@ -28,6 +30,43 @@ std::string Atlas::normalize(const std::string& s) {
     // ("femur_r" -> "femur"), leave it — else we'd eat the real trailing letter.
     if (!droppedSide && t.size() > 1 && (t.back() == 'l' || t.back() == 'r')) t.pop_back();
     return t;
+}
+
+std::vector<std::string> Atlas::joinKeys(const std::string& s) {
+    std::string t, cur;
+    auto flush = [&]{ if (!cur.empty()) { if (cur != "l" && cur != "r") t += cur; cur.clear(); } };
+    for (char c : s) {
+        if (std::isalnum((unsigned char)c)) cur += (char)std::tolower((unsigned char)c);
+        else flush();
+    }
+    flush();
+    std::vector<std::string> keys{ t };
+    if (t.size() > 1 && (t.back() == 'l' || t.back() == 'r'))
+        keys.push_back(t.substr(0, t.size() - 1));   // reading where it was the side
+    return keys;
+}
+
+bool Atlas::sameName(const std::string& a, const std::string& b) {
+    for (const auto& ka : joinKeys(a))
+        for (const auto& kb : joinKeys(b))
+            if (ka == kb) return true;
+    return false;
+}
+
+// Index `value` under every reading of `name`, first writer winning.
+template <class V>
+static void indexAll(std::unordered_map<std::string, V>& m, const std::string& name, const V& value) {
+    for (const auto& k : Atlas::joinKeys(name)) m.emplace(k, value);
+}
+
+// Look `name` up under every reading of it.
+template <class Map>
+static typename Map::const_iterator lookupAll(const Map& m, const std::string& name) {
+    for (const auto& k : Atlas::joinKeys(name)) {
+        auto it = m.find(k);
+        if (it != m.end()) return it;
+    }
+    return m.end();
 }
 
 // last path component of an OpenSim socket path, e.g. "/bodyset/femur_r" -> "femur_r"
@@ -88,47 +127,143 @@ bool Atlas::loadOsim(const std::string& path, std::string* err) {
         if (err) *err = doc.ErrorStr() ? doc.ErrorStr() : "xml parse error";
         return false;
     }
-    mMuscles.clear(); mByNorm.clear();
     xml::XMLElement* root = doc.RootElement();
-    if (root) collect(root, mMuscles);
-    for (int i = 0; i < (int)mMuscles.size(); i++)
-        mByNorm[normalize(mMuscles[i].name)] = i;
+    if (!root) return true;
+    // Stack onto whatever is already loaded: one .osim rarely covers the whole
+    // body, so lower limb / arm / wrist models are loaded in sequence. First
+    // file to define a name wins.
+    std::vector<AtlasMuscle> loaded;
+    collect(root, loaded);
+    for (auto& a : loaded) {
+        if (lookupAll(mByNorm, a.name) != mByNorm.end()) continue;
+        indexAll(mByNorm, a.name, (int)mMuscles.size());
+        mMuscles.push_back(std::move(a));
+    }
     return true;
 }
 
+bool Atlas::loadSynonyms(const std::string& path, std::string* err) {
+    std::ifstream in(path);
+    if (!in) { if (err) *err = "cannot open " + path; return false; }
+    json doc;
+    try { in >> doc; }
+    catch (const std::exception& e) { if (err) *err = e.what(); return false; }
+
+    mSynonym.clear(); mGroups.clear(); mAtlasKey.clear(); mBodyMap.clear();
+    for (auto it = doc["groups"].begin(); it != doc["groups"].end(); ++it) {
+        std::vector<std::string> members;
+        for (const auto& mem : it.value().value("members", json::array()))
+            members.push_back(mem.get<std::string>());
+        if (members.empty()) continue;
+        int gi = (int)mGroups.size();
+        mGroups.push_back(members);
+        // every bundle of the group resolves to the group's atlas entry
+        std::string atlasName = it.key();
+        for (const auto& mem : members) {
+            indexAll(mSynonym, mem, gi);
+            indexAll(mAtlasKey, mem, atlasName);
+        }
+    }
+    for (auto it = doc["bodies"].begin(); it != doc["bodies"].end(); ++it) {
+        std::vector<std::string> accepted;
+        for (const auto& b : it.value())
+            accepted.push_back(b.get<std::string>());
+        indexAll(mBodyMap, it.key(), accepted);
+    }
+    return true;
+}
+
+bool Atlas::bodyMatches(const std::string& modelBody, const std::string& atlasBody) const {
+    auto it = lookupAll(mBodyMap, atlasBody);
+    if (it == mBodyMap.end()) return sameName(modelBody, atlasBody);
+    for (const auto& ok : it->second) if (sameName(modelBody, ok)) return true;
+    return false;
+}
+
 const AtlasMuscle* Atlas::find(const std::string& modelMuscleName) const {
-    auto it = mByNorm.find(normalize(modelMuscleName));
+    std::string name = modelMuscleName;
+    auto syn = lookupAll(mAtlasKey, name);
+    if (syn != mAtlasKey.end()) name = syn->second;
+    auto it = lookupAll(mByNorm, name);
     return it != mByNorm.end() ? &mMuscles[it->second] : nullptr;
+}
+
+const std::vector<std::string>* Atlas::groupMembers(const std::string& modelMuscleName) const {
+    auto it = lookupAll(mSynonym, modelMuscleName);
+    return it != mSynonym.end() ? &mGroups[it->second] : nullptr;
+}
+
+// "L_Gluteus_Maximus" -> "L_"; a muscle without a side marker yields "".
+static std::string sidePrefix(const std::string& n) {
+    if (n.rfind("L_", 0) == 0) return "L_";
+    if (n.rfind("R_", 0) == 0) return "R_";
+    return "";
+}
+
+// The model muscles that share `mu`'s atlas entry on `mu`'s own side, in group
+// order. Falls back to {&mu} when the muscle is not in the synonym table.
+template <class M, class ModelT>
+static std::vector<M*> bundlesOf(ModelT& m, const Atlas& atlas, M& mu) {
+    std::vector<M*> out;
+    const std::vector<std::string>* members = atlas.groupMembers(mu.name);
+    if (!members) { out.push_back(&mu); return out; }
+    std::string pre = sidePrefix(mu.name);
+    for (const auto& mem : *members)
+        for (auto& cand : m.muscles)
+            if (cand.name == pre + mem) { out.push_back(&cand); break; }
+    if (out.empty()) out.push_back(&mu);
+    return out;
 }
 
 json Atlas::validate(const Model& m, const Index& ix, const Atlas& atlas, double f0RelTol) {
     (void)ix;
     json findings = json::array();
+    std::set<std::string> f0Done;      // side prefix + atlas name, checked once per group
     for (const auto& mu : m.muscles) {
         const AtlasMuscle* a = atlas.find(mu.name);
         if (!a) { findings.push_back({ {"muscle", mu.name}, {"issue", "not_in_atlas"} }); continue; }
         if (!mu.waypoints.empty()) {
             std::string org = mu.waypoints.front().body;
             std::string ins = mu.waypoints.back().body;
-            if (!a->originBody.empty() && normalize(org) != normalize(a->originBody))
-                findings.push_back({ {"muscle", mu.name}, {"issue", "origin_mismatch"},
-                                     {"model", org}, {"atlas", a->originBody} });
-            if (!a->insertionBody.empty() && normalize(ins) != normalize(a->insertionBody))
-                findings.push_back({ {"muscle", mu.name}, {"issue", "insertion_mismatch"},
-                                     {"model", ins}, {"atlas", a->insertionBody} });
+            // Origin and insertion are compared as an unordered pair: which end a
+            // model lists first is a bookkeeping convention (gait2392 runs the
+            // external oblique pelvis-first, anatomy runs it ribs-first) and the
+            // path — hence the mechanics — is the same either way.
+            bool flipped = atlas.bodyMatches(org, a->insertionBody)
+                        && atlas.bodyMatches(ins, a->originBody);
+            if (!flipped) {
+                if (!a->originBody.empty() && !atlas.bodyMatches(org, a->originBody))
+                    findings.push_back({ {"muscle", mu.name}, {"issue", "origin_mismatch"},
+                                         {"model", org}, {"atlas", a->originBody} });
+                if (!a->insertionBody.empty() && !atlas.bodyMatches(ins, a->insertionBody))
+                    findings.push_back({ {"muscle", mu.name}, {"issue", "insertion_mismatch"},
+                                         {"model", ins}, {"atlas", a->insertionBody} });
+            }
         }
-        if (a->f0 > 0 && mu.f0 > 0) {
-            double rel = std::fabs(mu.f0 - a->f0) / a->f0;
-            if (rel > f0RelTol)
+        if (mu.pen_angle == 0.0 && a->pen > 0.0)
+            findings.push_back({ {"muscle", mu.name}, {"issue", "pennation_missing"},
+                                 {"model", mu.pen_angle}, {"atlas", a->pen} });
+        // f0 is compared for the group as a whole: the model splits one atlas
+        // muscle into several bundles, so only their sum is meaningful.
+        if (a->f0 > 0 && f0Done.insert(sidePrefix(mu.name) + a->name).second) {
+            auto bundles = bundlesOf<const Muscle, const Model>(m, atlas, mu);
+            double sum = 0;
+            for (const auto* b : bundles) sum += b->f0;
+            double rel = std::fabs(sum - a->f0) / a->f0;
+            if (sum > 0 && rel > f0RelTol)
                 findings.push_back({ {"muscle", mu.name}, {"issue", "f0_deviation"},
-                                     {"model", mu.f0}, {"atlas", a->f0}, {"rel", rel} });
+                                     {"model", sum}, {"atlas", a->f0}, {"rel", rel},
+                                     {"bundles", (int)bundles.size()} });
         }
     }
     return findings;
 }
 
-int Atlas::sync(Model& m, const Atlas& atlas, bool fillHill, bool dryRun) {
+int Atlas::sync(Model& m, const Atlas& atlas, bool fillHill, bool dryRun, bool fillLengths) {
     int changed = 0;
+    std::set<std::string> f0Done;      // side prefix + atlas name, rescaled once per group
+    const double tension = m.meta.specific_tension_N_cm2 > 0
+                         ? m.meta.specific_tension_N_cm2 : 60.0;
     for (auto& mu : m.muscles) {
         const AtlasMuscle* a = atlas.find(mu.name);
         if (!a) continue;
@@ -138,9 +273,32 @@ int Atlas::sync(Model& m, const Atlas& atlas, bool fillHill, bool dryRun) {
             else if (mu.name.rfind("R_", 0) == 0) { if (!dryRun) mu.side = "R"; touched = true; }
         }
         if (fillHill && a->f0 > 0) {
-            if (!dryRun) { mu.f0 = a->f0; if (a->lm > 0) mu.lm = a->lm;
-                           if (a->lt > 0) mu.lt = a->lt; mu.pen_angle = a->pen; }
+            if (!dryRun) {
+                mu.pen_angle = a->pen;
+                if (fillLengths && a->lm > 0 && a->lt > 0) {
+                    // metres -> MASS' fraction of the rest muscle-tendon length
+                    double fibre = a->lm * std::cos(a->pen);
+                    double ref   = fibre + a->lt;
+                    mu.lt = a->lt / ref;
+                    mu.lm = 1.0 - mu.lt;
+                }
+            }
             touched = true;
+            // Distribute the atlas f0 over the group's bundles, preserving the
+            // proportions already authored in the model (equal split if the
+            // bundles carry no force yet), then derive PCSA from it.
+            if (f0Done.insert(sidePrefix(mu.name) + a->name).second) {
+                auto bundles = bundlesOf<Muscle, Model>(m, atlas, mu);
+                double sum = 0;
+                for (const auto* b : bundles) sum += b->f0;
+                for (auto* b : bundles) {
+                    double share = sum > 0 ? b->f0 / sum : 1.0 / (double)bundles.size();
+                    if (!dryRun) {
+                        b->f0 = a->f0 * share;
+                        b->pcsa_cm2 = b->f0 / tension;
+                    }
+                }
+            }
         }
         if (touched) changed++;
     }

@@ -1,0 +1,624 @@
+{
+  "_note": "Sinonimos entre os nomes abreviados dos atlas OpenSim e os nomes por extenso do modelo .mass. A chave e o nome exato do musculo no .osim (lado direito quando o atlas e bilateral; o lado e ignorado no join). Cada grupo lista os feixes do nosso modelo que juntos representam esse musculo: o f0 do atlas e distribuido entre eles preservando a proporcao ja existente no modelo, enquanto lm/lt/pen_angle sao copiados iguais.",
+  "sources": {
+    "gait2392": "gait2392_thelen2003muscle.osim",
+    "arm26": "arm26.osim",
+    "wrist": "wrist.osim"
+  },
+  "_bodies_note": "Correspondencia de ossos: o esqueleto dos atlas e mais fino que o nosso (23 corpos), entao varios colapsam num so. O lado e ignorado. Um osso do atlas ausente aqui e comparado por nome.",
+  "bodies": {
+    "pelvis": [
+      "Pelvis"
+    ],
+    "femur": [
+      "Femur"
+    ],
+    "tibia": [
+      "Tibia"
+    ],
+    "talus": [
+      "Talus"
+    ],
+    "calcn": [
+      "Talus"
+    ],
+    "toes": [
+      "FootThumb",
+      "FootPinky",
+      "Talus"
+    ],
+    "torso": [
+      "Torso",
+      "Spine"
+    ],
+    "base": [
+      "Torso",
+      "Spine",
+      "Shoulder"
+    ],
+    "ground": [
+      "Pelvis",
+      "Arm",
+      "Torso"
+    ],
+    "humerus": [
+      "Arm"
+    ],
+    "ulna": [
+      "ForeArm"
+    ],
+    "radius": [
+      "ForeArm"
+    ],
+    "ulna_radius_hand": [
+      "ForeArm",
+      "Hand"
+    ],
+    "proximal_row": [
+      "Hand"
+    ],
+    "metacarpal1": [
+      "Hand"
+    ],
+    "metacarpal2": [
+      "Hand"
+    ],
+    "metacarpal3": [
+      "Hand"
+    ],
+    "metacarpal4": [
+      "Hand"
+    ],
+    "metacarpal5": [
+      "Hand"
+    ],
+    "thumb": [
+      "Hand"
+    ],
+    "indexfinger": [
+      "Hand"
+    ],
+    "midfinger": [
+      "Hand"
+    ],
+    "ringfinger": [
+      "Hand"
+    ],
+    "littlefinger": [
+      "Hand"
+    ]
+  },
+  "groups": {
+    "APL": {
+      "source": "wrist",
+      "members": [
+        "Abductor_Pollicis_Longus"
+      ]
+    },
+    "BIClong": {
+      "source": "arm26",
+      "members": [
+        "Bicep_Brachii_Long_Head"
+      ]
+    },
+    "BICshort": {
+      "source": "arm26",
+      "members": [
+        "Bicep_Brachii_Short_Head"
+      ]
+    },
+    "BRA": {
+      "source": "arm26",
+      "members": [
+        "Brachialis"
+      ]
+    },
+    "ECRL": {
+      "source": "wrist",
+      "members": [
+        "Extensor_Carpi_Radialis_Longus"
+      ]
+    },
+    "ECU_pre-surgery": {
+      "source": "wrist",
+      "members": [
+        "Extensor_Carpi_Ulnaris"
+      ]
+    },
+    "EDCI": {
+      "source": "wrist",
+      "members": [
+        "Extensor_Digitorum_Index"
+      ]
+    },
+    "EDCM": {
+      "source": "wrist",
+      "members": [
+        "Extensor_Digitorum1"
+      ]
+    },
+    "EDCR": {
+      "source": "wrist",
+      "members": [
+        "Extensor_Digitorum_Ring"
+      ]
+    },
+    "EDM": {
+      "source": "wrist",
+      "members": [
+        "Extensor_Digiti_Minimi"
+      ]
+    },
+    "EPB": {
+      "source": "wrist",
+      "members": [
+        "Extensor_Pollicis_Brevis"
+      ]
+    },
+    "EPL": {
+      "source": "wrist",
+      "members": [
+        "Extensor_Pollicis_Longus"
+      ]
+    },
+    "FCR": {
+      "source": "wrist",
+      "members": [
+        "Flexor_Carpi_Radialis"
+      ]
+    },
+    "FCU": {
+      "source": "wrist",
+      "members": [
+        "Flexor_Carpi_Ulnaris"
+      ]
+    },
+    "FDPI": {
+      "source": "wrist",
+      "members": [
+        "Flexor_Digitorum_Profundus_Index"
+      ]
+    },
+    "FDPL": {
+      "source": "wrist",
+      "members": [
+        "Flexor_Digitorum_Profundus_Little"
+      ]
+    },
+    "FDPM": {
+      "source": "wrist",
+      "members": [
+        "Flexor_Digitorum_Profundus2"
+      ]
+    },
+    "FDPR": {
+      "source": "wrist",
+      "members": [
+        "Flexor_Digitorum_Profundus_Ring"
+      ]
+    },
+    "FDSI": {
+      "source": "wrist",
+      "members": [
+        "Flexor_Digitorum_Superficialis_Index"
+      ]
+    },
+    "FDSL": {
+      "source": "wrist",
+      "members": [
+        "Flexor_Digitorum_Superficialis_Little"
+      ]
+    },
+    "FDSM": {
+      "source": "wrist",
+      "members": [
+        "Flexor_Digitorum_Superficialis"
+      ]
+    },
+    "FDSR": {
+      "source": "wrist",
+      "members": [
+        "Flexor_Digitorum_Superficialis_Ring"
+      ]
+    },
+    "FPL": {
+      "source": "wrist",
+      "members": [
+        "Flexor_Pollicis_Longus"
+      ]
+    },
+    "PL": {
+      "source": "wrist",
+      "members": [
+        "Palmaris_Longus"
+      ]
+    },
+    "TRIlat": {
+      "source": "arm26",
+      "members": [
+        "Triceps_Lateral_Head"
+      ]
+    },
+    "TRIlong": {
+      "source": "arm26",
+      "members": [
+        "Triceps_Long_Head"
+      ]
+    },
+    "TRImed": {
+      "source": "arm26",
+      "members": [
+        "Triceps_Medial_Head"
+      ]
+    },
+    "add_brev_r": {
+      "source": "gait2392",
+      "members": [
+        "Adductor_Brevis",
+        "Adductor_Brevis1"
+      ]
+    },
+    "add_long_r": {
+      "source": "gait2392",
+      "members": [
+        "Adductor_Longus",
+        "Adductor_Longus1"
+      ]
+    },
+    "add_mag1_r": {
+      "source": "gait2392",
+      "members": [
+        "Adductor_Magnus",
+        "Adductor_Magnus1"
+      ]
+    },
+    "add_mag2_r": {
+      "source": "gait2392",
+      "members": [
+        "Adductor_Magnus2",
+        "Adductor_Magnus3"
+      ]
+    },
+    "add_mag3_r": {
+      "source": "gait2392",
+      "members": [
+        "Adductor_Magnus4"
+      ]
+    },
+    "bifemlh_r": {
+      "source": "gait2392",
+      "members": [
+        "Bicep_Femoris_Longus"
+      ]
+    },
+    "bifemsh_r": {
+      "source": "gait2392",
+      "members": [
+        "Bicep_Femoris_Short",
+        "Bicep_Femoris_Short1"
+      ]
+    },
+    "ercspn_r": {
+      "source": "gait2392",
+      "members": [
+        "Longissimus_Thoracis",
+        "iliocostalis"
+      ]
+    },
+    "ext_dig_r": {
+      "source": "gait2392",
+      "members": [
+        "Extensor_Digitorum_Longus",
+        "Extensor_Digitorum_Longus1",
+        "Extensor_Digitorum_Longus2",
+        "Extensor_Digitorum_Longus3"
+      ]
+    },
+    "ext_hal_r": {
+      "source": "gait2392",
+      "members": [
+        "Extensor_Hallucis_Longus"
+      ]
+    },
+    "extobl_r": {
+      "source": "gait2392",
+      "members": [
+        "External_Oblique",
+        "External_Oblique1",
+        "External_Oblique2"
+      ]
+    },
+    "flex_dig_r": {
+      "source": "gait2392",
+      "members": [
+        "Flexor_Digitorum_Longus",
+        "Flexor_Digitorum_Longus1",
+        "Flexor_Digitorum_Longus2",
+        "Flexor_Digitorum_Longus3"
+      ]
+    },
+    "flex_hal_r": {
+      "source": "gait2392",
+      "members": [
+        "Flexor_Hallucis",
+        "Flexor_Hallucis1"
+      ]
+    },
+    "gem_r": {
+      "source": "gait2392",
+      "members": [
+        "Superior_Gemellus",
+        "Inferior_Gemellus"
+      ]
+    },
+    "glut_max1_r": {
+      "source": "gait2392",
+      "members": [
+        "Gluteus_Maximus",
+        "Gluteus_Maximus1"
+      ]
+    },
+    "glut_max2_r": {
+      "source": "gait2392",
+      "members": [
+        "Gluteus_Maximus2",
+        "Gluteus_Maximus3"
+      ]
+    },
+    "glut_max3_r": {
+      "source": "gait2392",
+      "members": [
+        "Gluteus_Maximus4"
+      ]
+    },
+    "glut_med1_r": {
+      "source": "gait2392",
+      "members": [
+        "Gluteus_Medius",
+        "Gluteus_Medius1"
+      ]
+    },
+    "glut_med2_r": {
+      "source": "gait2392",
+      "members": [
+        "Gluteus_Medius2"
+      ]
+    },
+    "glut_med3_r": {
+      "source": "gait2392",
+      "members": [
+        "Gluteus_Medius3"
+      ]
+    },
+    "glut_min1_r": {
+      "source": "gait2392",
+      "members": [
+        "Gluteus_Minimus"
+      ]
+    },
+    "glut_min2_r": {
+      "source": "gait2392",
+      "members": [
+        "Gluteus_Minimus1"
+      ]
+    },
+    "glut_min3_r": {
+      "source": "gait2392",
+      "members": [
+        "Gluteus_Minimus2"
+      ]
+    },
+    "grac_r": {
+      "source": "gait2392",
+      "members": [
+        "Gracilis"
+      ]
+    },
+    "iliacus_r": {
+      "source": "gait2392",
+      "members": [
+        "iliacus",
+        "iliacus1",
+        "iliacus2"
+      ]
+    },
+    "intobl_r": {
+      "source": "gait2392",
+      "members": [
+        "Internal_Oblique",
+        "Internal_Oblique1",
+        "Internal_Oblique2"
+      ]
+    },
+    "lat_gas_r": {
+      "source": "gait2392",
+      "members": [
+        "Gastrocnemius_Lateral_Head"
+      ]
+    },
+    "med_gas_r": {
+      "source": "gait2392",
+      "members": [
+        "Gastrocnemius_Medial_Head"
+      ]
+    },
+    "pect_r": {
+      "source": "gait2392",
+      "members": [
+        "Pectineus"
+      ]
+    },
+    "per_brev_r": {
+      "source": "gait2392",
+      "members": [
+        "Peroneus_Brevis"
+      ]
+    },
+    "per_long_r": {
+      "source": "gait2392",
+      "members": [
+        "Peroneus_Longus"
+      ]
+    },
+    "per_tert_r": {
+      "source": "gait2392",
+      "members": [
+        "Peroneus_Tertius",
+        "Peroneus_Tertius1"
+      ]
+    },
+    "peri_r": {
+      "source": "gait2392",
+      "members": [
+        "Piriformis",
+        "Piriformis1"
+      ]
+    },
+    "psoas_r": {
+      "source": "gait2392",
+      "members": [
+        "Psoas_Major",
+        "Psoas_Major1",
+        "Psoas_Major2"
+      ]
+    },
+    "quad_fem_r": {
+      "source": "gait2392",
+      "members": [
+        "Quadratus_Femoris"
+      ]
+    },
+    "rect_fem_r": {
+      "source": "gait2392",
+      "members": [
+        "Rectus_Femoris",
+        "Rectus_Femoris1"
+      ]
+    },
+    "sar_r": {
+      "source": "gait2392",
+      "members": [
+        "Sartorius"
+      ]
+    },
+    "semimem_r": {
+      "source": "gait2392",
+      "members": [
+        "Semimembranosus",
+        "Semimembranosus1"
+      ]
+    },
+    "semiten_r": {
+      "source": "gait2392",
+      "members": [
+        "Semitendinosus"
+      ]
+    },
+    "soleus_r": {
+      "source": "gait2392",
+      "members": [
+        "Soleus",
+        "Soleus1"
+      ]
+    },
+    "tfl_r": {
+      "source": "gait2392",
+      "members": [
+        "Tensor_Fascia_Lata",
+        "Tensor_Fascia_Lata1",
+        "Tensor_Fascia_Lata2"
+      ]
+    },
+    "tib_ant_r": {
+      "source": "gait2392",
+      "members": [
+        "Tibialis_Anterior"
+      ]
+    },
+    "tib_post_r": {
+      "source": "gait2392",
+      "members": [
+        "Tibialis_Posterior"
+      ]
+    },
+    "vas_int_r": {
+      "source": "gait2392",
+      "members": [
+        "Vastus_Intermedius",
+        "Vastus_Intermedius1"
+      ]
+    },
+    "vas_lat_r": {
+      "source": "gait2392",
+      "members": [
+        "Vastus_Lateralis",
+        "Vastus_Lateralis1"
+      ]
+    },
+    "vas_med_r": {
+      "source": "gait2392",
+      "members": [
+        "Vastus_Medialis",
+        "Vastus_Medialis1",
+        "Vastus_Medialis2"
+      ]
+    }
+  },
+  "unmapped": [
+    "Anconeous",
+    "Brachioradialis",
+    "Coracobrachialis",
+    "Deltoid",
+    "Deltoid1",
+    "Deltoid2",
+    "Flexor_Digiti_Minimi_Brevis_Foot",
+    "Infraspinatus1",
+    "Latissimus_Dorsi",
+    "Latissimus_Dorsi3",
+    "Latissimus_Dorsi5",
+    "Longissimus_Capitis3",
+    "Longus_Capitis2",
+    "Multifidus",
+    "Obturator_Externus",
+    "Obturator_Internus",
+    "Omohyoid",
+    "Pectoralis_Major",
+    "Pectoralis_Major2",
+    "Pectoralis_Minor1",
+    "Plantaris",
+    "Platysma1",
+    "Popliteus",
+    "Psoas_Minor",
+    "Quadratus_Lumborum1",
+    "Quadratus_Lumborum2",
+    "Quadratus_Lumborum3",
+    "Rectus_Abdominis1",
+    "Rhomboid_Major2",
+    "Rhomboid_Minor",
+    "Scalene_Anterior1",
+    "Scalene_Middle4",
+    "Semispinalis_Capitis1",
+    "Serratus_Anterior2",
+    "Serratus_Anterior4",
+    "Serratus_Posterior_Inferior",
+    "Splenius_Capitis1",
+    "Splenius_Cervicis",
+    "Splenius_Cervicis1",
+    "Sternocleidomastoid1",
+    "Subclavian",
+    "Subscapularis1",
+    "Supraspinatus",
+    "Teres_Major",
+    "Transversus_Abdominis",
+    "Transversus_Abdominis2",
+    "Transversus_Abdominis4",
+    "Trapezius",
+    "Trapezius3",
+    "Trapezius5",
+    "ab1",
+    "ab2",
+    "ab3",
+    "ab4",
+    "ab5"
+  ]
+}

@@ -1,0 +1,1526 @@
+{
+  "_note": "Musculos humanos ausentes do modelo, definidos no lado esquerdo; a tool add_muscles espelha para o direito (X negado, sufixo L/R do osso trocado). Coordenadas em metros no espaco de mundo da pose de referencia, iguais aos waypoints ja existentes. lm/lt seguem a convencao do modelo (fracoes do comprimento musculotendineo de repouso, lm+lt ~ 1.1-1.2); pen_angle em radianos. Excluidos os musculos cujos ossos ainda nao existem: pronadores/supinador (cotovelo e Revolute, sem radio e ulna separados), intrinsecos da mao (sem falanges), intercostais e diafragma (sem costelas articuladas) e toda a musculatura facial (sem mandibula).",
+  "muscles": [
+    {
+      "name": "Teres_Minor",
+      "anatomy": {
+        "latin": "Musculus teres minor",
+        "pt": "Redondo menor",
+        "group": "shoulder_external_rotator",
+        "antagonist": "Subscapularis1"
+      },
+      "hill": {
+        "f0": 354.0,
+        "lm": 0.95,
+        "lt": 0.2,
+        "pen_angle": 0.4189
+      },
+      "waypoints": [
+        {
+          "body": "ShoulderL",
+          "p": [
+            0.098,
+            1.398,
+            -0.126
+          ]
+        },
+        {
+          "body": "ShoulderL",
+          "p": [
+            0.172,
+            1.428,
+            -0.072
+          ]
+        },
+        {
+          "body": "ArmL",
+          "p": [
+            0.209,
+            1.438,
+            -0.036
+          ]
+        },
+        {
+          "body": "ArmL",
+          "p": [
+            0.214,
+            1.443,
+            -0.024
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Levator_Scapulae",
+      "anatomy": {
+        "latin": "Musculus levator scapulae",
+        "pt": "Levantador da escapula",
+        "group": "scapula_elevator",
+        "antagonist": "Trapezius3"
+      },
+      "hill": {
+        "f0": 150.0,
+        "lm": 1.0,
+        "lt": 0.15,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "Neck",
+          "p": [
+            0.026,
+            1.566,
+            -0.048
+          ]
+        },
+        {
+          "body": "Neck",
+          "p": [
+            0.044,
+            1.524,
+            -0.062
+          ]
+        },
+        {
+          "body": "ShoulderL",
+          "p": [
+            0.078,
+            1.472,
+            -0.096
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Serratus_Anterior1",
+      "anatomy": {
+        "latin": "Musculus serratus anterior",
+        "pt": "Serratil anterior (digitacao superior)",
+        "group": "scapula_protractor",
+        "antagonist": "Rhomboid_Minor"
+      },
+      "hill": {
+        "f0": 100.0,
+        "lm": 1.2,
+        "lt": 0.1,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "ShoulderL",
+          "p": [
+            0.09,
+            1.448,
+            -0.112
+          ]
+        },
+        {
+          "body": "ShoulderL",
+          "p": [
+            0.104,
+            1.446,
+            -0.094
+          ]
+        },
+        {
+          "body": "Torso",
+          "p": [
+            0.128,
+            1.442,
+            -0.04
+          ]
+        },
+        {
+          "body": "Torso",
+          "p": [
+            0.118,
+            1.448,
+            -0.018
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Serratus_Anterior5",
+      "anatomy": {
+        "latin": "Musculus serratus anterior",
+        "pt": "Serratil anterior (digitacao inferior)",
+        "group": "scapula_protractor",
+        "antagonist": "Rhomboid_Major2"
+      },
+      "hill": {
+        "f0": 100.0,
+        "lm": 1.2,
+        "lt": 0.1,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "ShoulderL",
+          "p": [
+            0.094,
+            1.32,
+            -0.13
+          ]
+        },
+        {
+          "body": "Torso",
+          "p": [
+            0.112,
+            1.322,
+            -0.098
+          ]
+        },
+        {
+          "body": "Torso",
+          "p": [
+            0.14,
+            1.288,
+            -0.014
+          ]
+        },
+        {
+          "body": "Torso",
+          "p": [
+            0.122,
+            1.27,
+            0.046
+          ]
+        }
+      ]
+    },
+    {
+      "name": "External_Oblique",
+      "anatomy": {
+        "latin": "Musculus obliquus externus abdominis",
+        "pt": "Obliquo externo do abdome (feixe superior)",
+        "group": "trunk_rotator",
+        "antagonist": "Internal_Oblique"
+      },
+      "hill": {
+        "f0": 300.0,
+        "lm": 0.8,
+        "lt": 0.35,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "Torso",
+          "p": [
+            0.104,
+            1.282,
+            0.058
+          ]
+        },
+        {
+          "body": "Torso",
+          "p": [
+            0.098,
+            1.204,
+            0.078
+          ]
+        },
+        {
+          "body": "Pelvis",
+          "p": [
+            0.032,
+            1.032,
+            0.074
+          ]
+        }
+      ]
+    },
+    {
+      "name": "External_Oblique1",
+      "anatomy": {
+        "latin": "Musculus obliquus externus abdominis",
+        "pt": "Obliquo externo do abdome (feixe medio)",
+        "group": "trunk_rotator",
+        "antagonist": "Internal_Oblique1"
+      },
+      "hill": {
+        "f0": 300.0,
+        "lm": 0.8,
+        "lt": 0.35,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "Torso",
+          "p": [
+            0.118,
+            1.234,
+            0.012
+          ]
+        },
+        {
+          "body": "Torso",
+          "p": [
+            0.108,
+            1.176,
+            0.052
+          ]
+        },
+        {
+          "body": "Pelvis",
+          "p": [
+            0.062,
+            1.042,
+            0.058
+          ]
+        }
+      ]
+    },
+    {
+      "name": "External_Oblique2",
+      "anatomy": {
+        "latin": "Musculus obliquus externus abdominis",
+        "pt": "Obliquo externo do abdome (feixe lateral)",
+        "group": "trunk_lateral_flexor",
+        "antagonist": "Internal_Oblique2"
+      },
+      "hill": {
+        "f0": 300.0,
+        "lm": 0.8,
+        "lt": 0.35,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "Torso",
+          "p": [
+            0.114,
+            1.192,
+            -0.042
+          ]
+        },
+        {
+          "body": "Pelvis",
+          "p": [
+            0.104,
+            1.056,
+            -0.012
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Spinalis",
+      "anatomy": {
+        "latin": "Musculus spinalis thoracis",
+        "pt": "Espinal do torax",
+        "group": "trunk_extensor",
+        "antagonist": "Rectus_Abdominis1"
+      },
+      "hill": {
+        "f0": 290.0,
+        "lm": 0.85,
+        "lt": 0.25,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "Pelvis",
+          "p": [
+            0.012,
+            1.005,
+            -0.1
+          ]
+        },
+        {
+          "body": "Spine",
+          "p": [
+            0.014,
+            1.098,
+            -0.082
+          ]
+        },
+        {
+          "body": "Torso",
+          "p": [
+            0.016,
+            1.2,
+            -0.096
+          ]
+        },
+        {
+          "body": "Torso",
+          "p": [
+            0.016,
+            1.3,
+            -0.118
+          ]
+        },
+        {
+          "body": "Torso",
+          "p": [
+            0.015,
+            1.4,
+            -0.112
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Semispinalis_Thoracis",
+      "anatomy": {
+        "latin": "Musculus semispinalis thoracis",
+        "pt": "Semiespinal do torax",
+        "group": "trunk_extensor",
+        "antagonist": "Rectus_Abdominis1"
+      },
+      "hill": {
+        "f0": 200.0,
+        "lm": 0.9,
+        "lt": 0.2,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "Torso",
+          "p": [
+            0.024,
+            1.24,
+            -0.108
+          ]
+        },
+        {
+          "body": "Torso",
+          "p": [
+            0.02,
+            1.35,
+            -0.12
+          ]
+        },
+        {
+          "body": "Torso",
+          "p": [
+            0.016,
+            1.45,
+            -0.1
+          ]
+        },
+        {
+          "body": "Neck",
+          "p": [
+            0.013,
+            1.506,
+            -0.068
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Semispinalis_Cervicis",
+      "anatomy": {
+        "latin": "Musculus semispinalis cervicis",
+        "pt": "Semiespinal do pescoco",
+        "group": "neck_extensor",
+        "antagonist": "Longus_Colli"
+      },
+      "hill": {
+        "f0": 200.0,
+        "lm": 0.95,
+        "lt": 0.15,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "Torso",
+          "p": [
+            0.02,
+            1.432,
+            -0.106
+          ]
+        },
+        {
+          "body": "Neck",
+          "p": [
+            0.015,
+            1.512,
+            -0.072
+          ]
+        },
+        {
+          "body": "Neck",
+          "p": [
+            0.011,
+            1.56,
+            -0.062
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Serratus_Posterior_Superior",
+      "anatomy": {
+        "latin": "Musculus serratus posterior superior",
+        "pt": "Serratil posterior superior",
+        "group": "rib_elevator",
+        "antagonist": "Serratus_Posterior_Inferior"
+      },
+      "hill": {
+        "f0": 150.0,
+        "lm": 0.95,
+        "lt": 0.15,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "Neck",
+          "p": [
+            0.012,
+            1.522,
+            -0.084
+          ]
+        },
+        {
+          "body": "Torso",
+          "p": [
+            0.058,
+            1.452,
+            -0.1
+          ]
+        },
+        {
+          "body": "Torso",
+          "p": [
+            0.088,
+            1.412,
+            -0.072
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Scalene_Posterior",
+      "anatomy": {
+        "latin": "Musculus scalenus posterior",
+        "pt": "Escaleno posterior",
+        "group": "neck_lateral_flexor",
+        "antagonist": "Scalene_Anterior1"
+      },
+      "hill": {
+        "f0": 150.0,
+        "lm": 0.9,
+        "lt": 0.15,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "Torso",
+          "p": [
+            0.062,
+            1.478,
+            -0.052
+          ]
+        },
+        {
+          "body": "Neck",
+          "p": [
+            0.044,
+            1.542,
+            -0.028
+          ]
+        },
+        {
+          "body": "Neck",
+          "p": [
+            0.034,
+            1.562,
+            -0.02
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Longus_Colli",
+      "anatomy": {
+        "latin": "Musculus longus colli",
+        "pt": "Longo do pescoco",
+        "group": "neck_flexor",
+        "antagonist": "Semispinalis_Cervicis"
+      },
+      "hill": {
+        "f0": 150.0,
+        "lm": 1.0,
+        "lt": 0.1,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "Torso",
+          "p": [
+            0.016,
+            1.468,
+            0.006
+          ]
+        },
+        {
+          "body": "Neck",
+          "p": [
+            0.014,
+            1.52,
+            0.002
+          ]
+        },
+        {
+          "body": "Neck",
+          "p": [
+            0.011,
+            1.57,
+            -0.002
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rectus_Capitis_Posterior_Major",
+      "anatomy": {
+        "latin": "Musculus rectus capitis posterior major",
+        "pt": "Reto posterior maior da cabeca",
+        "group": "head_extensor",
+        "antagonist": "Longus_Capitis2"
+      },
+      "hill": {
+        "f0": 80.0,
+        "lm": 1.0,
+        "lt": 0.1,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "Neck",
+          "p": [
+            0.016,
+            1.545,
+            -0.072
+          ]
+        },
+        {
+          "body": "Head",
+          "p": [
+            0.022,
+            1.598,
+            -0.072
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rectus_Capitis_Posterior_Minor",
+      "anatomy": {
+        "latin": "Musculus rectus capitis posterior minor",
+        "pt": "Reto posterior menor da cabeca",
+        "group": "head_extensor",
+        "antagonist": "Rectus_Capitis_Anterior"
+      },
+      "hill": {
+        "f0": 50.0,
+        "lm": 1.0,
+        "lt": 0.1,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "Neck",
+          "p": [
+            0.007,
+            1.558,
+            -0.07
+          ]
+        },
+        {
+          "body": "Head",
+          "p": [
+            0.008,
+            1.6,
+            -0.07
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Obliquus_Capitis_Superior",
+      "anatomy": {
+        "latin": "Musculus obliquus capitis superior",
+        "pt": "Obliquo superior da cabeca",
+        "group": "head_lateral_flexor",
+        "antagonist": "Rectus_Capitis_Lateralis"
+      },
+      "hill": {
+        "f0": 60.0,
+        "lm": 1.0,
+        "lt": 0.1,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "Neck",
+          "p": [
+            0.032,
+            1.548,
+            -0.056
+          ]
+        },
+        {
+          "body": "Head",
+          "p": [
+            0.024,
+            1.594,
+            -0.064
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rectus_Capitis_Lateralis",
+      "anatomy": {
+        "latin": "Musculus rectus capitis lateralis",
+        "pt": "Reto lateral da cabeca",
+        "group": "head_lateral_flexor",
+        "antagonist": "Obliquus_Capitis_Superior"
+      },
+      "hill": {
+        "f0": 50.0,
+        "lm": 1.0,
+        "lt": 0.1,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "Neck",
+          "p": [
+            0.034,
+            1.552,
+            -0.022
+          ]
+        },
+        {
+          "body": "Head",
+          "p": [
+            0.038,
+            1.592,
+            -0.024
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rectus_Capitis_Anterior",
+      "anatomy": {
+        "latin": "Musculus rectus capitis anterior",
+        "pt": "Reto anterior da cabeca",
+        "group": "head_flexor",
+        "antagonist": "Rectus_Capitis_Posterior_Minor"
+      },
+      "hill": {
+        "f0": 50.0,
+        "lm": 1.0,
+        "lt": 0.1,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "Neck",
+          "p": [
+            0.016,
+            1.55,
+            0.004
+          ]
+        },
+        {
+          "body": "Head",
+          "p": [
+            0.014,
+            1.592,
+            0.002
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Extensor_Carpi_Radialis_Brevis",
+      "anatomy": {
+        "latin": "Musculus extensor carpi radialis brevis",
+        "pt": "Extensor radial curto do carpo",
+        "group": "wrist_extensor",
+        "antagonist": "Flexor_Carpi_Radialis"
+      },
+      "hill": {
+        "f0": 252.0,
+        "lm": 0.7,
+        "lt": 0.5,
+        "pen_angle": 0.157
+      },
+      "waypoints": [
+        {
+          "body": "ArmL",
+          "p": [
+            0.508,
+            1.482,
+            -0.01
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.56,
+            1.488,
+            0.024
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.724,
+            1.482,
+            0.024
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.784,
+            1.486,
+            0.011
+          ]
+        },
+        {
+          "body": "HandL",
+          "p": [
+            0.838,
+            1.484,
+            0.036
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Flexor_Digitorum_Superficialis",
+      "anatomy": {
+        "latin": "Musculus flexor digitorum superficialis",
+        "pt": "Flexor superficial dos dedos",
+        "group": "finger_flexor",
+        "antagonist": "Extensor_Digitorum1"
+      },
+      "hill": {
+        "f0": 520.0,
+        "lm": 0.7,
+        "lt": 0.45,
+        "pen_angle": 0.105
+      },
+      "waypoints": [
+        {
+          "body": "ArmL",
+          "p": [
+            0.52,
+            1.43,
+            -0.014
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.65,
+            1.45,
+            0.006
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.782,
+            1.458,
+            0.026
+          ]
+        },
+        {
+          "body": "HandL",
+          "p": [
+            0.83,
+            1.47,
+            0.03
+          ]
+        },
+        {
+          "body": "HandL",
+          "p": [
+            0.94,
+            1.446,
+            0.042
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Abductor_Hallucis",
+      "anatomy": {
+        "latin": "Musculus abductor hallucis",
+        "pt": "Abdutor do halux",
+        "group": "hallux_abductor",
+        "antagonist": "Flexor_Hallucis"
+      },
+      "hill": {
+        "f0": 200.0,
+        "lm": 0.95,
+        "lt": 0.15,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "TalusL",
+          "p": [
+            0.07,
+            0.02,
+            -0.06
+          ]
+        },
+        {
+          "body": "TalusL",
+          "p": [
+            0.062,
+            0.012,
+            0.02
+          ]
+        },
+        {
+          "body": "FootThumbL",
+          "p": [
+            0.062,
+            0.01,
+            0.098
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Flexor_Hallucis_Brevis",
+      "anatomy": {
+        "latin": "Musculus flexor hallucis brevis",
+        "pt": "Flexor curto do halux",
+        "group": "hallux_flexor",
+        "antagonist": "Extensor_Hallucis_Longus"
+      },
+      "hill": {
+        "f0": 150.0,
+        "lm": 1.0,
+        "lt": 0.1,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "TalusL",
+          "p": [
+            0.07,
+            0.014,
+            0.03
+          ]
+        },
+        {
+          "body": "FootThumbL",
+          "p": [
+            0.066,
+            0.009,
+            0.1
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Abductor_Digiti_Minimi_Foot",
+      "anatomy": {
+        "latin": "Musculus abductor digiti minimi pedis",
+        "pt": "Abdutor do dedo minimo do pe",
+        "group": "toe_abductor",
+        "antagonist": "Flexor_Digiti_Minimi_Brevis_Foot"
+      },
+      "hill": {
+        "f0": 100.0,
+        "lm": 0.95,
+        "lt": 0.15,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "TalusL",
+          "p": [
+            0.115,
+            0.018,
+            -0.058
+          ]
+        },
+        {
+          "body": "TalusL",
+          "p": [
+            0.126,
+            0.012,
+            0.02
+          ]
+        },
+        {
+          "body": "FootPinkyL",
+          "p": [
+            0.13,
+            0.01,
+            0.086
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Flexor_Digitorum_Brevis",
+      "anatomy": {
+        "latin": "Musculus flexor digitorum brevis",
+        "pt": "Flexor curto dos dedos",
+        "group": "toe_flexor",
+        "antagonist": "Extensor_Digitorum_Brevis"
+      },
+      "hill": {
+        "f0": 150.0,
+        "lm": 0.95,
+        "lt": 0.15,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "TalusL",
+          "p": [
+            0.093,
+            0.016,
+            -0.06
+          ]
+        },
+        {
+          "body": "TalusL",
+          "p": [
+            0.1,
+            0.01,
+            0.02
+          ]
+        },
+        {
+          "body": "FootPinkyL",
+          "p": [
+            0.108,
+            0.009,
+            0.086
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Extensor_Digitorum_Brevis",
+      "anatomy": {
+        "latin": "Musculus extensor digitorum brevis",
+        "pt": "Extensor curto dos dedos",
+        "group": "toe_extensor",
+        "antagonist": "Flexor_Digitorum_Brevis"
+      },
+      "hill": {
+        "f0": 100.0,
+        "lm": 1.0,
+        "lt": 0.1,
+        "pen_angle": 0.0
+      },
+      "waypoints": [
+        {
+          "body": "TalusL",
+          "p": [
+            0.108,
+            0.048,
+            -0.02
+          ]
+        },
+        {
+          "body": "TalusL",
+          "p": [
+            0.104,
+            0.036,
+            0.04
+          ]
+        },
+        {
+          "body": "FootPinkyL",
+          "p": [
+            0.106,
+            0.02,
+            0.082
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Extensor_Digitorum_Index",
+      "anatomy": {
+        "latin": "Musculus extensor digitorum",
+        "pt": "Extensor dos dedos (tendao do indicador)",
+        "group": "finger_extensor",
+        "antagonist": "Flexor_Digitorum_Profundus_Index"
+      },
+      "hill": {
+        "f0": 23.4,
+        "lm": 0.6,
+        "lt": 0.7,
+        "pen_angle": 0.0524
+      },
+      "waypoints": [
+        {
+          "body": "ArmL",
+          "p": [
+            0.5193,
+            1.4879,
+            -0.0016
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.7458,
+            1.4826,
+            0.0055
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.7821,
+            1.4784,
+            0.0023
+          ]
+        },
+        {
+          "body": "HandL",
+          "p": [
+            0.8247,
+            1.4917,
+            0.0263
+          ]
+        },
+        {
+          "body": "HandL",
+          "p": [
+            0.8957,
+            1.4814,
+            0.048
+          ]
+        },
+        {
+          "body": "HandL_Index3",
+          "p": [
+            1.0155,
+            1.4603,
+            0.0829
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Extensor_Digitorum_Ring",
+      "anatomy": {
+        "latin": "Musculus extensor digitorum",
+        "pt": "Extensor dos dedos (tendao do anelar)",
+        "group": "finger_extensor",
+        "antagonist": "Flexor_Digitorum_Profundus_Ring"
+      },
+      "hill": {
+        "f0": 38.7,
+        "lm": 0.6,
+        "lt": 0.7,
+        "pen_angle": 0.0524
+      },
+      "waypoints": [
+        {
+          "body": "ArmL",
+          "p": [
+            0.5193,
+            1.4879,
+            -0.0016
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.7458,
+            1.4826,
+            0.0055
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.7821,
+            1.4784,
+            0.0023
+          ]
+        },
+        {
+          "body": "HandL",
+          "p": [
+            0.8247,
+            1.4917,
+            0.0263
+          ]
+        },
+        {
+          "body": "HandL",
+          "p": [
+            0.8957,
+            1.4814,
+            0.022
+          ]
+        },
+        {
+          "body": "HandL_Ring3",
+          "p": [
+            1.0178,
+            1.4602,
+            0.0461
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Flexor_Digitorum_Profundus_Index",
+      "anatomy": {
+        "latin": "Musculus flexor digitorum profundus",
+        "pt": "Flexor profundo dos dedos (indicador)",
+        "group": "finger_flexor",
+        "antagonist": "Extensor_Digitorum_Index"
+      },
+      "hill": {
+        "f0": 53.1,
+        "lm": 0.65,
+        "lt": 0.45,
+        "pen_angle": 0.1222
+      },
+      "waypoints": [
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.5942,
+            1.4653,
+            -0.0091
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.6518,
+            1.4566,
+            0.0004
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.7831,
+            1.4595,
+            0.0238
+          ]
+        },
+        {
+          "body": "HandL",
+          "p": [
+            0.8283,
+            1.4709,
+            0.042
+          ]
+        },
+        {
+          "body": "HandL_Index3",
+          "p": [
+            1.0155,
+            1.4603,
+            0.0829
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Flexor_Digitorum_Profundus_Ring",
+      "anatomy": {
+        "latin": "Musculus flexor digitorum profundus",
+        "pt": "Flexor profundo dos dedos (anelar)",
+        "group": "finger_flexor",
+        "antagonist": "Extensor_Digitorum_Ring"
+      },
+      "hill": {
+        "f0": 51.6,
+        "lm": 0.65,
+        "lt": 0.45,
+        "pen_angle": 0.1222
+      },
+      "waypoints": [
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.5942,
+            1.4653,
+            -0.0091
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.6518,
+            1.4566,
+            0.0004
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.7831,
+            1.4595,
+            0.0238
+          ]
+        },
+        {
+          "body": "HandL",
+          "p": [
+            0.8283,
+            1.4709,
+            0.018
+          ]
+        },
+        {
+          "body": "HandL_Ring3",
+          "p": [
+            1.0178,
+            1.4602,
+            0.0461
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Flexor_Digitorum_Profundus_Little",
+      "anatomy": {
+        "latin": "Musculus flexor digitorum profundus",
+        "pt": "Flexor profundo dos dedos (minimo)",
+        "group": "finger_flexor",
+        "antagonist": "Extensor_Digiti_Minimi"
+      },
+      "hill": {
+        "f0": 66.0,
+        "lm": 0.65,
+        "lt": 0.45,
+        "pen_angle": 0.1396
+      },
+      "waypoints": [
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.5942,
+            1.4653,
+            -0.0091
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.6518,
+            1.4566,
+            0.0004
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.7831,
+            1.4595,
+            0.0238
+          ]
+        },
+        {
+          "body": "HandL",
+          "p": [
+            0.8283,
+            1.4709,
+            0.002
+          ]
+        },
+        {
+          "body": "HandL_Little3",
+          "p": [
+            0.9951,
+            1.4609,
+            0.0243
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Flexor_Digitorum_Superficialis_Index",
+      "anatomy": {
+        "latin": "Musculus flexor digitorum superficialis",
+        "pt": "Flexor superficial dos dedos (indicador)",
+        "group": "finger_flexor",
+        "antagonist": "Extensor_Digitorum_Index"
+      },
+      "hill": {
+        "f0": 51.3,
+        "lm": 0.7,
+        "lt": 0.45,
+        "pen_angle": 0.1047
+      },
+      "waypoints": [
+        {
+          "body": "ArmL",
+          "p": [
+            0.52,
+            1.43,
+            -0.014
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.65,
+            1.45,
+            0.006
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.782,
+            1.458,
+            0.026
+          ]
+        },
+        {
+          "body": "HandL",
+          "p": [
+            0.83,
+            1.47,
+            0.044
+          ]
+        },
+        {
+          "body": "HandL_Index2",
+          "p": [
+            0.9961,
+            1.4608,
+            0.0795
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Flexor_Digitorum_Superficialis_Ring",
+      "anatomy": {
+        "latin": "Musculus flexor digitorum superficialis",
+        "pt": "Flexor superficial dos dedos (anelar)",
+        "group": "finger_flexor",
+        "antagonist": "Extensor_Digitorum_Ring"
+      },
+      "hill": {
+        "f0": 48.3,
+        "lm": 0.7,
+        "lt": 0.45,
+        "pen_angle": 0.0698
+      },
+      "waypoints": [
+        {
+          "body": "ArmL",
+          "p": [
+            0.52,
+            1.43,
+            -0.014
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.65,
+            1.45,
+            0.006
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.782,
+            1.458,
+            0.026
+          ]
+        },
+        {
+          "body": "HandL",
+          "p": [
+            0.83,
+            1.47,
+            0.02
+          ]
+        },
+        {
+          "body": "HandL_Ring2",
+          "p": [
+            0.9978,
+            1.4608,
+            0.0426
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Flexor_Digitorum_Superficialis_Little",
+      "anatomy": {
+        "latin": "Musculus flexor digitorum superficialis",
+        "pt": "Flexor superficial dos dedos (minimo)",
+        "group": "finger_flexor",
+        "antagonist": "Extensor_Digiti_Minimi"
+      },
+      "hill": {
+        "f0": 12.0,
+        "lm": 0.7,
+        "lt": 0.45,
+        "pen_angle": 0.0873
+      },
+      "waypoints": [
+        {
+          "body": "ArmL",
+          "p": [
+            0.52,
+            1.43,
+            -0.014
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.65,
+            1.45,
+            0.006
+          ]
+        },
+        {
+          "body": "ForeArmL",
+          "p": [
+            0.782,
+            1.458,
+            0.026
+          ]
+        },
+        {
+          "body": "HandL",
+          "p": [
+            0.83,
+            1.47,
+            0.004
+          ]
+        },
+        {
+          "body": "HandL_Little2",
+          "p": [
+            0.9796,
+            1.4613,
+            0.0216
+          ]
+        }
+      ]
+    }
+  ]
+}
